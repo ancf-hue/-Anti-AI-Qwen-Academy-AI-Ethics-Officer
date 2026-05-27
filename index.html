@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5.0">
+  
+  <!-- 🔐 Production-ready CSP -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' ws: wss:; media-src 'self' blob:;">
+  
+  <!-- 📱 PWA & Mobile Optimizations -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0a0c14">
+  <meta name="description" content="Anti-AI Qwen Academy: Специалист по этике ИИ — ответственное внедрение искусственного интеллекта">
+  
+  <!-- 🔹 Логотип -->
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiQW50aS1BSSBRd2VuIEFjYWRlbXk6IEFJIEV0aGljcyBPZmZpY2VyIiwic2hvcnRfbmFtZSI6IlF3ZW4tRU8iLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzBhMGMxNCIsInRoZW1lX2NvbG9yIjoiIzdjMzFlZCIsImljb25zIjpbeyJzcmMiOiJmYXZpY29uLmljbyIsInNpemVzIjoiYW55IiwidHlwZSI6ImltYWdlL3gtaWNvbiJ9XX0=">
+  
+  <title>anti-ai-qwen-academy • AI Ethics Officer</title>
+  
+  <style>
+    :root {
+      --bg: #0a0c14; --surface: rgba(20,24,36,0.95); --glass: rgba(255,255,255,0.06);
+      --text: #e6eaf0; --muted: #8a92a6;
+      --accent: #7c3aed; --ethics: #f59e0b; --ethics-glow: rgba(245,158,11,0.3);
+      --success: #2ecc71; --warning: #f39c12; --danger: #e74c3c; --gold: #ffd700;
+      --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, monospace;
+      --radius: 14px; --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
+      --focus-ring: 0 0 0 3px rgba(124,58,237,0.4);
+    }
+    
+    /* 🔹 Base Reset & Accessibility */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { 
+      background: var(--bg); color: var(--text); font-family: var(--font); 
+      min-height: 100vh; display: flex; justify-content: center; padding: 16px;
+      line-height: 1.5; -webkit-text-size-adjust: 100%;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+      html { scroll-behavior: auto; }
+    }
+    
+    /* 🔹 Interactive Elements */
+    button, .btn, .tab-btn, input, textarea, select { 
+      user-select: none; -webkit-tap-highlight-color: transparent; 
+      font-family: inherit; font-size: inherit;
+    }
+    button:focus-visible, .btn:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+      outline: none; box-shadow: var(--focus-ring);
+    }
+    .code-block, .lesson-content, .cert-id, .lib-item p, .lesson-input, .case-text, .metadata-preview { 
+      user-select: text; -webkit-user-select: text;
+    }
+    
+    /* 🔹 Main App Container */
+    #app { 
+      width: 100%; max-width: 860px; 
+      background: var(--surface); backdrop-filter: blur(16px); 
+      border: 1px solid rgba(255,255,255,0.12); border-radius: var(--radius); 
+      box-shadow: 0 12px 40px rgba(0,0,0,0.6); 
+      padding: 20px; display: flex; flex-direction: column; gap: 16px; 
+      position: relative; overflow: hidden;
+    }
+    #app::before { 
+      content: ''; position: absolute; top: -30%; left: -20%; 
+      width: 140%; height: 140%; 
+      background: radial-gradient(circle at 20% 20%, var(--ethics-glow), transparent 50%), 
+                  radial-gradient(circle at 80% 80%, rgba(124,58,237,0.08), transparent 50%); 
+      pointer-events: none; z-index: 0; 
+    }
+
+    /* 🔹 Hero Section */
+    .hero-section { text-align: center; padding: 10px 0 16px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    
+    /* 🔹 Logo Row */
+    .logo-row { display:flex; align-items:center; justify-content:center; gap:14px; margin-bottom:10px; flex-wrap:wrap; }
+    .logo-img { width:52px; height:52px; object-fit:contain; border-radius:8px; border:1px solid rgba(124,58,237,0.3); flex-shrink:0; }
+    .logo-fallback { display:none; align-items:center; justify-content:center; width:52px; height:52px; background:linear-gradient(135deg, var(--ethics), var(--accent)); border-radius:8px; font-size:1.5rem; font-weight:bold; color:#fff; flex-shrink:0; border:1px solid rgba(124,58,237,0.4); }
+    .logo-fallback svg { width:32px; height:32px; }
+    
+    /* 🔹 Hero Image */
+    .hero-img { max-width: 100%; height: auto; border-radius: 12px; margin: 12px 0; border: 1px solid rgba(124,58,237,0.3); }
+    .hero-fallback { padding: 20px; background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(124,58,237,0.1)); border-radius: 12px; margin: 12px 0; border: 2px dashed var(--ethics); text-align: center; }
+    
+    /* 🔹 Badges */
+    .badge-ethics { display: inline-block; padding: 6px 16px; background: linear-gradient(135deg, var(--ethics), #d97706); color: #000; border-radius: 20px; font-weight: bold; margin: 8px 4px; font-size: 0.85rem; }
+    .badge-free { display: inline-block; padding: 6px 16px; background: linear-gradient(135deg, var(--success), #27ae60); color: #fff; border-radius: 20px; font-weight: bold; margin: 8px 4px; font-size: 0.85rem; }
+    .badge-gold { display: inline-block; padding: 6px 16px; background: linear-gradient(135deg, var(--gold), #ffed4e); color: #000; border-radius: 20px; font-weight: bold; margin: 8px 4px; font-size: 0.85rem; }
+    .update-indicator { display: inline-flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--success); margin-top: 8px; }
+    .update-indicator.live::before { content: ''; width: 8px; height: 8px; background: var(--success); border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    /* 🔹 Concept Grid */
+    .concept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 12px; }
+    .concept-card { background: rgba(0,0,0,0.3); border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); transition: var(--transition); }
+    .concept-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px var(--ethics-glow); border-color: var(--ethics); }
+    .concept-card img { width: 100%; height: 120px; object-fit: cover; display: block; }
+    .concept-icon { width: 100%; height: 120px; background: linear-gradient(135deg, rgba(245,158,11,0.2), rgba(124,58,237,0.15)); display: flex; align-items: center; justify-content: center; font-size: 3rem; }
+    .concept-caption { padding: 10px; font-size: 0.8rem; color: var(--muted); text-align: center; font-weight: 600; }
+
+    /* 🔹 Typography */
+    h1 { font-size: 1.2rem; display: flex; align-items: center; gap: 8px; justify-content: center; flex-wrap: wrap; margin: 0; }
+    h1 .brand { color: var(--ethics) !important; font-weight: 700; }
+    h1 .sep { color: var(--muted) !important; margin: 0 6px; }
+    h1 .spec { color: var(--text) !important; }
+    
+    /* 🔹 Header Actions */
+    .hdr-actions { display: flex; gap: 8px; justify-content: center; margin-top: 12px; }
+    #langBtn, #guideBtn, #voiceBtn, #libDocsBtn { 
+      background: var(--glass); border: 1px solid rgba(255,255,255,0.2); 
+      padding: 6px 10px; border-radius: 8px; color: var(--text); 
+      cursor: pointer; font-weight: bold; transition: var(--transition); font-size: 0.8rem; 
+    }
+    #langBtn:hover, #guideBtn:hover, #voiceBtn:hover, #libDocsBtn:hover { border-color: var(--ethics); box-shadow: 0 0 15px var(--ethics-glow); }
+    #voiceBtn.active { background: rgba(245,158,11,0.2); border-color: var(--ethics); color: var(--ethics); }
+
+    /* 🔹 Tabs Navigation */
+    .tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: thin; }
+    .tabs::-webkit-scrollbar { height: 4px; }
+    .tabs::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+    .tab-btn { 
+      flex: 1; min-width: max-content; padding: 10px; 
+      background: var(--glass); border: 1px solid rgba(255,255,255,0.1); 
+      border-radius: 10px; color: var(--muted); font-weight: 600; 
+      cursor: pointer; transition: var(--transition); white-space: nowrap; 
+    }
+    .tab-btn:hover { background: rgba(255,255,255,0.08); }
+    .tab-btn.active { background: rgba(245,158,11,0.15); border-color: var(--ethics); color: var(--ethics); box-shadow: 0 0 20px var(--ethics-glow); }
+    .tab-btn:focus-visible { outline: none; box-shadow: var(--focus-ring), 0 0 20px var(--ethics-glow); }
+
+    /* 🔹 Tab Content */
+    .tab-content { display: none; flex-direction: column; gap: 12px; max-height: 60vh; overflow-y: auto; padding-right: 4px; }
+    .tab-content.active { display: flex; }
+    .tab-content::-webkit-scrollbar { width: 6px; }
+    .tab-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+
+    /* 🔹 Cards */
+    .card { background: rgba(0,0,0,0.35); padding: 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); transition: var(--transition); }
+    .card:hover { border-color: rgba(255,255,255,0.15); }
+    .card h3 { color: var(--gold); margin-bottom: 6px; font-size: 0.9rem; }
+    .card p, .card li { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+    .card ul, .card ol { padding-left: 18px; margin-top: 4px; }
+
+    /* 🔹 Tags */
+    .tag { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.75rem; margin: 2px; }
+    .tag-ethics { background: rgba(245,158,11,0.2); border: 1px solid var(--ethics); color: var(--ethics); }
+    .tag-purple { background: rgba(124,58,237,0.2); border: 1px solid var(--accent); color: var(--accent); }
+    .tag-green { background: rgba(46,204,113,0.2); border: 1px solid var(--success); color: var(--success); }
+
+    /* 🔹 Lesson Cards */
+    .lesson-card { background: rgba(255,255,255,0.03); padding: 14px; border-radius: 10px; margin: 8px 0; border-left: 3px solid var(--muted); transition: var(--transition); }
+    .lesson-card.locked { opacity: 0.4; pointer-events: none; filter: grayscale(0.8); }
+    .lesson-card.active { border-left-color: var(--ethics); }
+    .lesson-card.completed { border-left-color: var(--success); opacity: 0.7; }
+    .lesson-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .lesson-title { font-weight: bold; color: var(--ethics); font-size: 0.95rem; }
+    .lesson-status { padding: 3px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: bold; }
+    .lesson-status.locked { background: rgba(255,255,255,0.1); color: var(--muted); }
+    .lesson-status.active { background: rgba(245,158,11,0.2); color: var(--ethics); }
+    .lesson-status.completed { background: rgba(46,204,113,0.2); color: var(--success); }
+    .lesson-content { font-size: 0.85rem; color: var(--muted); margin-bottom: 10px; }
+    .case-text { background: rgba(0,0,0,0.5); padding: 10px; border-radius: 6px; font-size: 0.85rem; margin: 8px 0; border-left: 3px solid var(--accent); white-space: pre-wrap; }
+    .lesson-task { background: rgba(245,158,11,0.08); padding: 10px; border-radius: 8px; margin: 8px 0; font-size: 0.8rem; border: 1px solid rgba(245,158,11,0.2); }
+    .qwen-format { background: rgba(124,58,237,0.15); padding: 8px; border-radius: 6px; margin: 8px 0; font-size: 0.75rem; font-family: monospace; border: 1px dashed var(--accent); color: var(--accent); }
+    .lesson-input { width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; color: var(--text); margin: 8px 0; font-family: var(--font); min-height: 80px; resize: vertical; font-size: 16px; }
+    .lesson-input:focus { border-color: var(--ethics); box-shadow: var(--focus-ring); }
+    .lesson-feedback { margin-top: 8px; padding: 10px; border-radius: 6px; font-size: 0.82rem; display: none; }
+    .lesson-feedback.success { background: rgba(46,204,113,0.1); border: 1px solid var(--success); color: var(--success); }
+    .lesson-feedback.error { background: rgba(231,76,60,0.1); border: 1px solid var(--danger); color: #ff8a8a; }
+
+    /* 🔹 Exam Questions */
+    .exam-question { margin: 16px 0; padding: 14px; background: rgba(0,0,0,0.3); border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); }
+    .exam-question.answered { border-color: var(--ethics); }
+    .exam-options label { display: block; margin: 6px 0; padding: 8px; background: rgba(255,255,255,0.03); border-radius: 6px; cursor: pointer; }
+    .exam-options label:hover { background: rgba(255,255,255,0.08); }
+    .exam-options input[type="radio"] { margin-right: 8px; accent-color: var(--ethics); }
+
+    /* 🔹 Certificate */
+    .certificate { background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(124,58,237,0.15)); border: 3px solid var(--ethics); border-radius: 16px; padding: 30px; text-align: center; margin: 12px 0; position: relative; overflow: hidden; box-shadow: 0 0 40px var(--ethics-glow); }
+    .certificate::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(245,158,11,0.03) 10px, rgba(245,158,11,0.03) 20px); animation: shimmer 3s linear infinite; }
+    @keyframes shimmer { 0%{transform:translate(-50%,-50%)} 100%{transform:translate(0,0)} }
+    .certificate-content { position: relative; z-index: 1; }
+    .certificate h3 { color: var(--ethics); margin-bottom: 12px; font-size: 1.5rem; }
+    .certificate p { font-size: 0.9rem; color: var(--text); margin: 6px 0; }
+    .cert-badge { display: inline-block; padding: 6px 16px; background: linear-gradient(135deg, var(--ethics), #d97706); color: #000; border-radius: 25px; font-weight: bold; margin: 12px 0; box-shadow: 0 4px 15px var(--ethics-glow); }
+    .cert-id { font-family: monospace; background: rgba(0,0,0,0.3); padding: 4px 12px; border-radius: 6px; color: var(--ethics); display: inline-block; margin: 8px 0; }
+    .cert-seal { width: 80px; height: 80px; border: 3px solid var(--ethics); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 16px auto; background: rgba(245,158,11,0.1); font-size: 2rem; box-shadow: 0 0 20px var(--ethics-glow); }
+    .cert-validator { margin-top: 16px; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 8px; text-align: left; }
+    .cert-validator input { width: 100%; padding: 8px; margin: 8px 0; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; color: var(--text); font-family: monospace; font-size: 16px; }
+
+    /* 🔹 Pipeline Grid */
+    .pipeline-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 12px 0; }
+    .pipeline-card { background: rgba(245,158,11,0.08); padding: 12px; border-radius: 10px; border: 1px solid rgba(245,158,11,0.2); }
+    .pipeline-card h4 { color: var(--ethics); margin-bottom: 6px; font-size: 0.85rem; }
+    .pipeline-card p { font-size: 0.75rem; color: var(--muted); line-height: 1.4; }
+    .pipeline-card .fmt { font-family: monospace; font-size: 0.7rem; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; color: var(--accent); }
+
+    /* 🔹 Skills Grid */
+    .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 12px 0; }
+    .skill-card { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 10px; border-left: 3px solid var(--accent); }
+    .skill-card h4 { color: var(--gold); margin-bottom: 8px; font-size: 0.9rem; }
+    .skill-card li { font-size: 0.8rem; color: var(--muted); margin-bottom: 4px; }
+
+    /* 🔹 Warning Box */
+    .warning-box { background: rgba(243,156,18,0.1); border-left: 4px solid var(--warning); padding: 12px; border-radius: 0 8px 8px 0; margin: 12px 0; font-size: 0.8rem; }
+    .warning-box strong { color: var(--warning); }
+
+    /* 🔹 Ethics Audit Simulator */
+    .audit-builder { background: rgba(245,158,11,0.1); border: 1px solid var(--ethics); border-radius: 10px; padding: 14px; margin: 12px 0; }
+    .audit-builder textarea { width: 100%; min-height: 80px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; color: var(--text); padding: 10px; font-family: var(--font); font-size: 0.85rem; font-size: 16px; }
+    .audit-builder textarea:focus { border-color: var(--ethics); box-shadow: var(--focus-ring); }
+    
+    .audit-params { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin: 12px 0; }
+    .audit-param { background: rgba(0,0,0,0.2); padding: 8px; border-radius: 6px; }
+    .audit-param label { display: block; font-size: 0.75rem; color: var(--muted); margin-bottom: 4px; }
+    .audit-param input, .audit-param select { width: 100%; padding: 6px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; color: var(--text); font-size: 0.8rem; font-size: 16px; }
+    
+    .stakeholder-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin: 12px 0; }
+    .stakeholder-item { background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; text-align: center; cursor: pointer; transition: var(--transition); border: 2px solid transparent; }
+    .stakeholder-item:hover, .stakeholder-item.selected { border-color: var(--ethics); background: rgba(245,158,11,0.15); }
+    .stakeholder-item .icon { font-size: 2rem; margin-bottom: 4px; }
+    .stakeholder-item .label { font-size: 0.7rem; color: var(--muted); }
+    
+    .risk-chart { margin: 12px 0; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; }
+    .risk-bar { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
+    .risk-bar .label { width: 120px; font-size: 0.8rem; color: var(--muted); }
+    .risk-bar .bar { flex: 1; height: 20px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+    .risk-bar .fill { height: 100%; background: linear-gradient(90deg, var(--ethics), var(--accent)); width: 50%; transition: width 0.3s ease; }
+    .risk-bar .value { width: 40px; font-size: 0.75rem; color: var(--muted); text-align: right; }
+    
+    .policy-preview { background: rgba(0,0,0,0.4); padding: 12px; border-radius: 8px; font-family: monospace; font-size: 0.8rem; color: var(--accent); margin: 8px 0; white-space: pre-wrap; max-height: 200px; overflow-y: auto; }
+
+    /* 🔹 Library Section */
+    .library-section { margin-bottom: 16px; }
+    .library-section h4 { color: var(--ethics); margin: 12px 0 8px; font-size: 1rem; }
+    .library-section ul { padding-left: 20px; font-size: 0.85rem; color: var(--muted); }
+    .library-section li { margin-bottom: 4px; }
+    .library-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; margin: 12px 0; }
+    .library-card { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 10px; border-left: 3px solid var(--ethics); }
+    .library-card h5 { color: var(--gold); margin-bottom: 6px; font-size: 0.9rem; }
+    .library-card p { font-size: 0.8rem; color: var(--muted); line-height: 1.4; }
+
+    /* 🔹 Form Elements */
+    input, textarea, select { 
+      width: 100%; padding: 10px; background: rgba(255,255,255,0.06); 
+      border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; 
+      color: var(--text); font-family: var(--font); outline: none; font-size: 16px;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--ethics); box-shadow: var(--focus-ring); }
+
+    /* 🔹 Buttons */
+    .btn { 
+      padding: 10px 14px; background: linear-gradient(135deg, var(--ethics), #d97706); 
+      color: #000; border: none; border-radius: 8px; font-weight: 700; 
+      cursor: pointer; transition: var(--transition); box-shadow: 0 4px 15px var(--ethics-glow); 
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px var(--ethics-glow); }
+    .btn:active { transform: translateY(0); }
+    .btn.secondary { background: var(--glass); color: var(--text); border: 1px solid rgba(255,255,255,0.2); box-shadow: none; }
+    .btn.secondary:hover { border-color: var(--ethics); }
+    .btn.danger { background: linear-gradient(135deg, var(--danger), #c0392b); color: #fff; }
+    .btn-group { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+
+    /* 🔹 Skill Progress */
+    .skill-item { margin: 10px 0; }
+    .skill-label { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 4px; }
+    .skill-bar { height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+    .skill-fill { height: 100%; background: linear-gradient(90deg, var(--ethics), var(--accent)); width: 0%; transition: width 0.8s ease; }
+
+    /* 🔹 Support Section */
+    .support { text-align: center; padding: 14px; background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(124,58,237,0.1)); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); margin-top: auto; }
+    .support h3 { color: var(--ethics); margin-bottom: 8px; }
+    .support p { font-size: 0.85rem; color: var(--muted); margin-bottom: 6px; }
+    footer { text-align: center; color: var(--muted); font-size: 0.7rem; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.08); margin-top: 8px; }
+
+    /* 🔹 Modal */
+    .modal { 
+      position: fixed; inset: 0; background: rgba(2,2,8,0.92); 
+      backdrop-filter: blur(8px); display: none; justify-content: center; 
+      align-items: center; z-index: 100; padding: 20px; 
+    }
+    .modal.open { display: flex; }
+    .modal-content { 
+      background: var(--surface); padding: 24px; border-radius: 16px; 
+      border: 1px solid rgba(245,158,11,0.3); max-width: 600px; width: 100%; 
+      max-height: 90vh; overflow-y: auto; position: relative; 
+    }
+    .modal-close { 
+      position: absolute; top: 12px; right: 12px; background: none; 
+      border: none; color: var(--muted); font-size: 1.2rem; cursor: pointer; 
+      padding: 4px; border-radius: 4px;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+
+    /* 🔹 Responsive */
+    @media(max-width:480px) {
+      #app { padding: 14px; } 
+      h1 { font-size: 1rem; }
+      .logo-img, .logo-fallback { width:40px; height:40px; }
+      .tab-btn { padding: 8px; font-size: 0.75rem; } 
+      .card { padding: 10px; }
+      .btn { padding: 8px 10px; font-size: 0.8rem; }
+      .concept-grid { grid-template-columns: 1fr 1fr; }
+      .pipeline-grid, .library-grid { grid-template-columns: 1fr; }
+      .certificate { padding: 20px; }
+      .audit-params { grid-template-columns: 1fr 1fr; }
+      .stakeholder-grid { grid-template-columns: repeat(2, 1fr); }
+      .risk-bar .label { width: 100px; font-size: 0.75rem; }
+      .risk-bar .value { width: 35px; font-size: 0.7rem; }
+    }
+    
+    /* 🔹 Print Styles */
+    @media print {
+      body { background: white; color: black; padding: 0; }
+      #app { box-shadow: none; border: none; max-width: none; }
+      .btn, .tabs, .hdr-actions, .support, footer { display: none !important; }
+      .certificate { border-color: #f59e0b; background: white; }
+    }
+  </style>
+</head>
+<body>
+
+<main id="app" role="main">
+  <div class="hero-section">
+    <div class="logo-row">
+      <img src="favicon.ico" alt="anti-ai-qwen-academy" class="logo-img"
+           onerror="if(this.src.indexOf('favicon')!==-1){this.style.display='none';const fb=this.nextElementSibling;if(fb&&fb.classList.contains('logo-fallback'))fb.style.display='flex';}">
+      <div class="logo-fallback" aria-hidden="true" role="img" aria-label="Qwen Academy Logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <h1>
+        <span class="brand">anti-ai-qwen-academy</span>
+        <span class="sep">•</span>
+        <span class="spec">AI Ethics Officer</span>
+      </h1>
+    </div>
+    
+    <p style="font-size:0.85rem; color:var(--muted); margin-top:4px;" data-i18n="hero_subtitle" aria-label="Course subtitle">
+      Ethics First • 100% Offline • 10 days • Responsible AI Implementation
+    </p>
+    
+    <img src="assets/images/hero-ethics-officer.png" alt="AI Ethics Officer Course" class="hero-img" 
+         onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+    <div class="hero-fallback" style="display:none;" role="img" aria-label="Course illustration">
+      <p style="font-size:3rem; margin-bottom:8px;" aria-hidden="true">⚖️</p>
+      <p style="color:var(--ethics); font-weight:bold; font-size:1.1rem;" data-i18n="qwen_title">
+        Anti-AI Qwen Academy: AI Ethics Officer Specialist
+      </p>
+      <p style="font-size:0.8rem; margin-top:8px;">
+        🎓 10 days • 🏛️ Library Hub • 🔐 Offline • ️ Ethics First
+      </p>
+    </div>
+
+    <div style="margin:12px 0;" role="list" aria-label="Course badges">
+      <span class="badge-ethics" role="listitem">⚖️ Ethics First</span>
+      <span class="badge-ethics" role="listitem">🌍 Global Standards</span>
+      <span class="badge-ethics" role="listitem">🔍 Bias Detection</span>
+      <span class="badge-free" role="listitem">🆓 Free & Open</span>
+    </div>
+
+    <div class="hdr-actions" role="toolbar" aria-label="Quick actions">
+      <button id="guideBtn" onclick="app.openModal('guideModal')" aria-haspopup="dialog">📖 <span data-i18n="guide_btn">10-Day Plan</span></button>
+      <button id="libDocsBtn" onclick="app.openModal('libraryDocsModal')" aria-haspopup="dialog">📚 <span data-i18n="lib_docs_btn">Library</span></button>
+      <button id="voiceBtn" onclick="app.toggleVoice()" aria-pressed="false" aria-label="Toggle voice narration">🔇</button>
+      <button id="langBtn" onclick="app.toggleLang()" aria-label="Switch language">🌐 EN</button>
+    </div>
+  </div>
+
+  <!-- 🔹 Concept Grid -->
+  <div class="concept-grid" role="list" aria-label="Core concepts">
+    <div class="concept-card" role="listitem">
+      <img src="assets/images/ethics-audit.png" alt="Ethics Audit" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'concept-icon\' aria-hidden=\'true\'>🔍</div><div class=\'concept-caption\' data-i18n=\'concept1\'>Ethics Audit</div>'">
+      <div class="concept-caption" data-i18n="concept1">Ethics Audit</div>
+    </div>
+    <div class="concept-card" role="listitem">
+      <img src="assets/images/bias-detection.png" alt="Bias Detection" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'concept-icon\' aria-hidden=\'true\'>⚖️</div><div class=\'concept-caption\' data-i18n=\'concept2\'>Bias Detection</div>'">
+      <div class="concept-caption" data-i18n="concept2">Bias Detection</div>
+    </div>
+    <div class="concept-card" role="listitem">
+      <img src="assets/images/policy-design.png" alt="Policy Design" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'concept-icon\' aria-hidden=\'true\'>📋</div><div class=\'concept-caption\' data-i18n=\'concept3\'>Policy Design</div>'">
+      <div class="concept-caption" data-i18n="concept3">Policy Design</div>
+    </div>
+    <div class="concept-card" role="listitem">
+      <img src="assets/images/stakeholder-map.png" alt="Stakeholders" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'concept-icon\' aria-hidden=\'true\'>👥</div><div class=\'concept-caption\' data-i18n=\'concept4\'>Stakeholders</div>'">
+      <div class="concept-caption" data-i18n="concept4">Stakeholders</div>
+    </div>
+    <div class="concept-card" role="listitem">
+      <img src="assets/images/compliance.png" alt="Compliance" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'concept-icon\' aria-hidden=\'true\'>🔐</div><div class=\'concept-caption\' data-i18n=\'concept5\'>Compliance</div>'">
+      <div class="concept-caption" data-i18n="concept5">Compliance</div>
+    </div>
+    <div class="concept-card" role="listitem">
+      <img src="assets/images/impact-assessment.png" alt="Impact Assessment" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'concept-icon\' aria-hidden=\'true\'>📊</div><div class=\'concept-caption\' data-i18n=\'concept6\'>Impact Assessment</div>'">
+      <div class="concept-caption" data-i18n="concept6">Impact Assessment</div>
+    </div>
+  </div>
+
+  <nav class="tabs" role="tablist" aria-label="Course sections">
+    <button class="tab-btn active" data-tab="course" role="tab" aria-selected="true" aria-controls="course" data-i18n="tab_course">🎓 Course</button>
+    <button class="tab-btn" data-tab="tools" role="tab" aria-selected="false" aria-controls="tools" data-i18n="tab_tools">🛠️ Tools</button>
+    <button class="tab-btn" data-tab="library" role="tab" aria-selected="false" aria-controls="library" data-i18n="tab_library">📚 Library</button>
+    <button class="tab-btn" data-tab="progress" role="tab" aria-selected="false" aria-controls="progress" data-i18n="tab_progress">📅 Progress</button>
+  </nav>
+
+  <!-- 🎓 COURSE TAB -->
+  <section id="course" class="tab-content active" role="tabpanel" aria-labelledby="tab-course">
+    <div class="card" style="border: 2px solid var(--ethics); background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(124,58,237,0.1));">
+      <h3 style="color: var(--ethics); text-align: center;" data-i18n="cert_conditions">🏆 CERTIFICATE REQUIREMENTS</h3>
+      <div style="display: flex; justify-content: center; gap: 16px; margin: 12px 0; flex-wrap: wrap;">
+        <div style="text-align: center;"><div style="font-size: 2rem;" aria-hidden="true">📚</div><b>10/10 lessons</b><br><span style="font-size: 0.8rem; color: var(--muted);" data-i18n="cond1_sub">Ethics Frameworks + Qwen formats</span></div>
+        <div style="text-align: center;"><div style="font-size: 2rem;" aria-hidden="true">🧠</div><b>10/10 exam</b><br><span style="font-size: 0.8rem; color: var(--muted);" data-i18n="cond2_sub">No mistakes</span></div>
+        <div style="text-align: center;"><div style="font-size: 2rem;" aria-hidden="true">📁</div><b data-i18n="cond3">Portfolio</b><br><span style="font-size: 0.8rem; color: var(--muted);" data-i18n="cond3_sub">5 cases in Qwen formats</span></div>
+      </div>
+      <p style="text-align: center; font-size: 0.85rem; color: var(--muted);" data-i18n="cert_warning">⚠️ Perfect results → Library Contributor access</p>
+    </div>
+
+    <div class="card">
+      <h3 data-i18n="progress_title">📊 Progress</h3>
+      <div class="skill-item">
+        <div class="skill-label"><span data-i18n="lessons_done">Lessons completed</span><span id="courseProgress">0/10</span></div>
+        <div class="skill-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Course progress">
+          <div class="skill-fill" id="courseBar" style="width:0%"></div>
+        </div>
+      </div>
+      <div style="margin-top:12px; text-align:center; border-top:1px solid rgba(255,255,255,0.1); padding-top:12px;">
+        <button class="btn danger" onclick="app.resetProgress()" style="font-size:0.8rem; width:100%;" data-i18n="reset_btn">🔄 Reset</button>
+        <p style="font-size:0.7rem; color:var(--muted); margin-top:6px;" data-i18n="reset_warning">⚠️ All data will be deleted</p>
+      </div>
+    </div>
+
+    <div id="lessonsContainer" role="list" aria-label="Course lessons"></div>
+    <div id="examContainer"></div>
+
+    <!-- CERTIFICATE -->
+    <div class="certificate" id="certificateBox" style="display:none;" role="region" aria-label="Certificate">
+      <div class="certificate-content">
+        <div class="cert-seal" aria-hidden="true">⚖️</div>
+        <h3 data-i18n="cert_heading">🎓 CERTIFICATE</h3>
+        <p style="font-size:1rem; margin:8px 0; color:var(--ethics);">
+          <b data-i18n="cert_course">Course: <span id="certCourseDisplay">Qwen AI Ethics Officer Specialist</span></b>
+        </p>
+        <p data-i18n="cert_confirms">This certifies that</p>
+        <p style="font-size:1.2rem; color:var(--gold); margin:8px 0; font-weight:bold;" data-i18n="cert_who">Certified AI Ethics Officer Specialist</p>
+        <p data-i18n="cert_completed">has successfully completed the responsible AI implementation course for ethical technology deployment</p>
+        <div class="cert-id" id="certIdDisplay" aria-label="Certificate ID">QWEN-ETHICS-XXXXXX</div>
+        <p style="font-size:0.8rem; color:var(--muted); margin-top:8px;"><span data-i18n="cert_issuer">Issuer:</span> <span id="certIssuerDisplay">Anti-AI Qwen Academy</span></p>
+        <p style="font-size:0.8rem; color:var(--muted); margin-top:4px;"><span data-i18n="cert_pipeline">Pipeline:</span> <span id="certPipelineDisplay">qwen-ethics-officer-v1</span></p>
+        <p style="font-size:0.8rem; color:var(--muted); margin-top:4px;"><span data-i18n="cert_compliance">Compliance:</span> <span id="certComplianceDisplay">eu_ai_act, iso_42001, gdpr_compliant</span></p>
+        <p style="font-size:0.8rem; color:var(--muted); margin-top:4px;" data-i18n="cert_date_label">Date: <span id="certDateDisplay"></span></p>
+        <div style="margin:12px 0;">
+          <button class="btn secondary" onclick="app.exportCertificate()" style="font-size:0.8rem; margin-right:8px;" data-i18n="cert_download">💾 JSON</button>
+          <button class="btn secondary" onclick="app.exportQwenPortfolio()" style="font-size:0.8rem; margin-right:8px;" data-i18n="cert_qwen_export">📤 Qwen Format</button>
+          <button class="btn secondary" onclick="app.printCertificate()" style="font-size:0.8rem;" data-i18n="cert_print">🖨️ Print</button>
+        </div>
+        <div class="cert-badge" data-i18n="cert_badge">Qwen AI Ethics Officer Specialist</div>
+        <div class="btn-group" style="justify-content:center; margin-top:16px; flex-wrap:wrap;">
+          <button class="btn" onclick="app.printCertificate()" data-i18n="cert_print">🖨️ Print / PDF</button>
+          <button class="btn secondary" onclick="app.switchTab('tools')" data-i18n="cert_practice">🛠️ Tools</button>
+        </div>
+        <div class="cert-validator">
+          <h4 style="color:var(--ethics); margin:0 0 8px 0;" data-i18n="cert_validate_title">🔍 Verify Certificate</h4>
+          <input type="text" id="validateInput" placeholder="QWEN-ETHICS-XXXXXX" pattern="QWEN-ETHICS-[A-Z0-9]{6}" aria-label="Enter certificate ID to verify">
+          <button class="btn secondary" onclick="app.validateCertificate()" style="width:100%; font-size:0.8rem;" data-i18n="cert_validate_btn">✅ Check</button>
+          <div id="validateResult" style="margin-top:8px; font-size:0.8rem; display:none;" role="status" aria-live="polite"></div>
+        </div>
+        <p style="font-size:0.75rem; color:var(--muted); margin-top:12px;" data-i18n="cert_security">🔒 Offline • SHA-256 • Qwen-compatible • GDPR-ready</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 🛠️ TOOLS TAB -->
+  <section id="tools" class="tab-content" role="tabpanel" aria-labelledby="tab-tools">
+    <div class="card" style="text-align:center; border-color:var(--ethics);">
+      <h3 data-i18n="tools_title">🛠️ AI Ethics Officer Toolkit</h3>
+      <p style="font-size:0.85rem; color:var(--muted); margin-top:8px;" data-i18n="tools_subtitle">Interactive tools for responsible AI implementation practice</p>
+    </div>
+    
+    <div class="card">
+      <h4 style="color:var(--ethics);">🔍 <span data-i18n="audit_builder">Ethics Audit Builder</span></h4>
+      <p style="font-size:0.8rem; color:var(--muted); margin:4px 0;" data-i18n="audit_desc">Create ethics audit reports with risk assessment parameters</p>
+      <div class="audit-builder">
+        <textarea id="auditDesc" placeholder="Describe the AI system to audit... e.g., 'HR recruitment algorithm: resume screening, candidate scoring, interview scheduling'" aria-label="Audit description"></textarea>
+        <div class="audit-params">
+          <div class="audit-param"><label for="systemTypeSelect">System Type</label><select id="systemTypeSelect"><option value="ml">Machine Learning</option><option value="nlp">NLP/LLM</option><option value="cv">Computer Vision</option><option value="hybrid">Hybrid System</option></select></div>
+          <div class="audit-param"><label for="riskLevelSelect">Risk Level</label><select id="riskLevelSelect"><option value="minimal">Minimal Risk</option><option value="limited">Limited Risk</option><option value="high">High Risk</option><option value="unacceptable">Unacceptable Risk</option></select></div>
+          <div class="audit-param"><label for="jurisdictionSelect">Jurisdiction</label><select id="jurisdictionSelect"><option value="eu">EU AI Act</option><option value="us">US Framework</option><option value="ru">RF 152-ФЗ</option><option value="global">Global Standards</option></select></div>
+          <div class="audit-param"><label for="fairnessSlider">Fairness Score: <span id="fairnessValue">7</span>/10</label><input type="range" id="fairnessSlider" min="1" max="10" value="7"></div>
+        </div>
+        <button class="btn secondary" onclick="app.generateAuditPreview()" style="font-size:0.8rem; width:100%;" data-i18n="preview_btn">👁️ Preview Qwen Format</button>
+        <div id="auditPreview" class="policy-preview" style="display:none;"></div>
+      </div>
+    </div>
+    
+    <div class="card" style="margin-top:12px;">
+      <h4 style="color:var(--ethics);">👥 <span data-i18n="stakeholder_mapper">Stakeholder Mapper</span></h4>
+      <p style="font-size:0.8rem; color:var(--muted); margin:4px 0;" data-i18n="stakeholder_desc">Map stakeholders and their ethical concerns for AI systems</p>
+      <div class="stakeholder-grid" id="stakeholderGrid"></div>
+      <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn secondary" onclick="app.mapStakeholder('high_impact')" style="font-size:0.75rem;">🔴 High Impact</button>
+        <button class="btn secondary" onclick="app.mapStakeholder('consulted')" style="font-size:0.75rem;">🟡 Consulted</button>
+        <button class="btn secondary" onclick="app.mapStakeholder('informed')" style="font-size:0.75rem;">🟢 Informed</button>
+      </div>
+      <div id="stakeholderResult" style="margin-top:8px; font-size:0.85rem; display:none;"></div>
+    </div>
+    
+    <div class="card" style="margin-top:12px;">
+      <h4 style="color:var(--ethics);">⚠️ <span data-i18n="risk_detector">Risk Detector</span></h4>
+      <p style="font-size:0.8rem; color:var(--muted); margin:4px 0;" data-i18n="risk_desc">Visualize ethical risks in your AI system design</p>
+      <div class="risk-chart" id="riskChart"></div>
+      <button class="btn secondary" onclick="app.analyzeRisks()" style="font-size:0.8rem; margin-top:8px; width:100%;" data-i18n="analyze_risks">🔍 Analyze Risks</button>
+      <div id="riskResult" style="margin-top:8px; display:none; font-size:0.85rem;"></div>
+    </div>
+    
+    <div class="card" style="margin-top:12px;">
+      <h4 style="color:var(--ethics);">📋 <span data-i18n="policy_gen">Policy Generator</span></h4>
+      <p style="font-size:0.8rem; color:var(--muted); margin:4px 0;" data-i18n="policy_desc">Generate responsible AI policy document for your organization</p>
+      <div style="margin:12px 0;">
+        <input type="text" id="policyTitle" placeholder="Policy Title: e.g., 'Responsible AI Use Policy for Healthcare'">
+        <input type="text" id="policyScope" placeholder="Scope: e.g., clinical decision support, patient data processing" style="margin-top:8px;">
+        <textarea id="policyNotes" placeholder="Notes: ethical principles, compliance requirements, review cycle..." style="margin-top:8px; min-height:80px;"></textarea>
+      </div>
+      <button class="btn secondary" onclick="app.generatePolicy()" style="font-size:0.8rem; width:100%;" data-i18n="generate_policy">📋 Generate Policy</button>
+      <div id="policyOutput" class="policy-preview" style="display:none;"></div>
+    </div>
+  </section>
+
+  <!-- 📚 LIBRARY TAB -->
+  <section id="library" class="tab-content" role="tabpanel" aria-labelledby="tab-library">
+    <div class="card" style="text-align:center; border-color:var(--ethics);">
+      <h3 data-i18n="library_title">📚 AI Ethics Officer Specialist Library</h3>
+      <p style="font-size:0.85rem; color:var(--muted); margin-top:8px;" data-i18n="library_subtitle">Role documentation, ethics frameworks, regulatory guides, resources</p>
+    </div>
+
+    <div class="card library-section">
+      <h4>⚖️ <span data-i18n="role_title">AI Ethics Officer</span></h4>
+      <p style="font-size:0.8rem; color:var(--muted); margin-bottom:8px;" data-i18n="role_subtitle">Guardian of responsible, transparent, and socially-oriented AI implementation</p>
+      <div class="library-grid">
+        <div class="library-card"><h5 data-i18n="role_mission">🔑 Key Mission</h5><p data-i18n="role_mission_desc">Ensure AI systems serve human values, not vice versa. Transform ethical principles into working procedures, audits, and policies.</p></div>
+        <div class="library-card"><h5 data-i18n="role_responsibilities">🧩 Responsibilities</h5><ul><li data-i18n="resp1">Bias & discrimination audits in models and data</li><li data-i18n="resp2">Develop internal responsible AI standards and codes of conduct</li><li data-i18n="resp3">Conduct team training, moderate ethical discussions</li><li data-i18n="resp4">Track regulations, prepare audit documentation</li><li data-i18n="resp5">Investigate ethical incidents, ensure public accountability</li></ul></div>
+        <div class="library-card"><h5 data-i18n="role_tools">🛠️ Tools</h5><p data-i18n="tools_desc">AI Fairness 360, SHAP, LIME, Responsible AI Toolkit, Policy templates, Stakeholder mapping frameworks.</p></div>
+        <div class="library-card"><h5 data-i18n="role_kpi">📊 KPIs</h5><ul><li data-i18n="kpi1">95%+ fairness metrics compliance in audited systems</li><li data-i18n="kpi2">0 critical ethical violations in deployed AI systems</li><li data-i18n="kpi3">100% stakeholder consultation for high-risk AI</li><li data-i18n="kpi4">All policies versioned, reviewed quarterly, publicly accessible</li></ul></div>
+      </div>
+    </div>
+
+    <div class="card library-section">
+      <h3 style="color:var(--ethics);" data-i18n="why_ethics_title">🎯 Why organizations need AI Ethics Officers</h3>
+      <p style="font-size:0.82rem; color:var(--muted); margin-bottom:12px;" data-i18n="why_ethics_desc">As AI transforms industries, Ethics Officers ensure technology serves society. They bridge technical teams, legal compliance, and public trust — preventing harm before deployment.</p>
+      <div class="pipeline-grid">
+        <div class="pipeline-card"><h4>🔍 Ethics Audit</h4><p data-i18n="pipe1_desc">Identify bias, discrimination, privacy risks in AI models and data pipelines</p><span class="fmt">qwen_ethics_audit_report.md</span></div>
+        <div class="pipeline-card"><h4>📋 Policy Design</h4><p data-i18n="pipe2_desc">Develop internal standards, codes of conduct, ethical review checklists</p><span class="fmt">qwen_responsible_ai_policy.json</span></div>
+        <div class="pipeline-card"><h4>👥 Stakeholder Engagement</h4><p data-i18n="pipe3_desc">Map affected groups, conduct consultations, ensure inclusive design</p><span class="fmt">qwen_stakeholder_map.csv</span></div>
+        <div class="pipeline-card"><h4>⚖️ Regulatory Compliance</h4><p data-i18n="pipe4_desc">Track EU AI Act, ISO 42001, GDPR, 152-ФЗ, prepare audit documentation</p><span class="fmt">qwen_compliance_matrix.yaml</span></div>
+        <div class="pipeline-card"><h4>📊 Impact Assessment</h4><p data-i18n="pipe5_desc">Evaluate social, environmental, economic impacts of AI deployment</p><span class="fmt">qwen_impact_assessment.json</span></div>
+      </div>
+      <div class="warning-box" style="margin-top:12px;"><strong data-i18n="warning_title">💡 Important:</strong><span data-i18n="why_ethics_warning">AI Ethics Officers don't block innovation — they ensure it serves humanity. They are the first line of defense against biased, harmful, or legally non-compliant AI systems.</span></div>
+    </div>
+
+    <div class="card library-section">
+      <h3 data-i18n="skills_section">🛠️ Graduate Skills</h3>
+      <div class="skills-grid">
+        <div class="skill-card"><h4 data-i18n="hard_skills">🔹 Hard Skills</h4><ul><li data-i18n="hard1">ML lifecycle understanding, fairness metrics, explainability tools</li><li data-i18n="hard2">Legal frameworks: GDPR, 152-ФЗ, EU AI Act, sectoral regulations</li><li data-i18n="hard3">Ethics frameworks: consequentialist, deontological, virtue ethics</li><li data-i18n="hard4">Risk assessment methodologies, stakeholder mapping, impact evaluation</li><li data-i18n="hard5">Policy drafting, audit reporting, compliance documentation</li></ul></div>
+        <div class="skill-card"><h4 data-i18n="soft_skills">🔹 Soft Skills</h4><ul><li data-i18n="soft1">Critical thinking: identify hidden assumptions, long-term consequences</li><li data-i18n="soft2">Communication: translate technical/legal norms into accessible guidance</li><li data-i18n="soft3">Mediation: facilitate ethical discussions, resolve value conflicts</li><li data-i18n="soft4">Cultural sensitivity: respect diverse values, avoid ethnocentric bias</li><li data-i18n="soft5">Courage: speak truth to power, advocate for vulnerable groups</li></ul></div>
+      </div>
+    </div>
+
+    <div class="card library-section">
+      <h3 data-i18n="jobs_title">💼 Where do AI Ethics Officers work?</h3>
+      <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;">
+        <span class="tag tag-ethics">🏢 Tech Companies</span><span class="tag tag-ethics">🏛️ Public Sector</span><span class="tag tag-ethics">🏥 Healthcare</span><span class="tag tag-ethics">🎓 Education</span><span class="tag tag-ethics">⚖️ Legal & Compliance</span><span class="tag tag-ethics">🌍 NGOs & International Orgs</span>
+      </div>
+      <p style="font-size:0.85rem; color:var(--muted); margin-top:12px;" data-i18n="salary_info">Formats: Full-time • Consultant • Volunteer • Grant-funded</p>
+    </div>
+  </section>
+
+  <!-- 📅 PROGRESS TAB -->
+  <section id="progress" class="tab-content" role="tabpanel" aria-labelledby="tab-progress">
+    <div class="card"><h3 data-i18n="progress_path">📈 Path to AI Ethics Officer Specialist</h3>
+      <ol style="padding-left:20px; color:var(--muted); line-height:1.8; font-size:0.82rem;">
+        <li><b>Days 1-3:</b> <span data-i18n="days1_3_desc">Ethics foundations, AI lifecycle, incident case studies</span></li>
+        <li><b>Days 4-6:</b> <span data-i18n="days4_6_desc">Bias detection, stakeholder mapping, risk assessment</span></li>
+        <li><b>Days 7-8:</b> <span data-i18n="days7_8_desc">Policy drafting, regulatory compliance, audit reporting</span></li>
+        <li><b>Day 9:</b> <span data-i18n="day9_desc">Portfolio in Qwen-compatible ethics formats</span></li>
+        <li><b>Day 10:</b> <span data-i18n="day10_desc">FINAL EXAM (10/10)</span></li>
+      </ol></div>
+    <div class="card"><h3 data-i18n="output_title">📦 Qwen AI Ethics Officer Reporting Formats</h3>
+      <div style="margin-top:8px;">
+        <div class="qwen-format">{"type": "qwen_ethics_audit", "model_id": "...", "bias_score": 0.12, "fairness_metrics": {"demographic_parity": 0.94}, "compliance": ["eu_ai_act"]}</div>
+        <div class="qwen-format">{"type": "qwen_ethics_policy", "version": "2.1", "principles": ["fairness", "transparency", "privacy"], "review_cycle": "quarterly"}</div>
+        <div class="qwen-format">pipeline: qwen-ethics-officer-v1 | compliance: gdpr_152fz_eu_ai_act</div>
+      </div></div>
+  </section>
+
+  <section class="support">
+    <h3 data-i18n="support_title">🤝 SUPPORT THE PROJECT 💙</h3>
+    <p data-i18n="support_desc">App is free. Always will be.<br>Support development:</p>
+    <div style="background:rgba(0,0,0,0.3); padding:6px 10px; border-radius:6px; display:inline-block; margin:4px 0;">
+      <span id="phoneNum" style="color:var(--gold); font-weight:bold;">8-920-227-56-76</span>
+    </div>
+    <button class="btn secondary" style="margin-top:6px; font-size:0.8rem;" onclick="app.copyPhone()" data-i18n="copy_phone">📋 Copy</button>
+    <a href="https://ancf-hue.github.io/" target="_blank" rel="noopener noreferrer" style="color:var(--accent); text-decoration:none; font-weight:bold; display:block; margin-top:4px;" data-i18n="catalog_link">🌟 Anti-AI Shield Catalog</a>
+  </section>
+
+  <footer data-i18n="footer">Anti-AI Qwen Academy | 100% Offline | AI Ethics Officer</footer>
+</main>
+
+<!-- MODALS -->
+<div id="guideModal" class="modal" onclick="if(event.target===this)app.closeModal('guideModal')" role="dialog" aria-modal="true" aria-labelledby="guideModalTitle">
+  <div class="modal-content">
+    <button class="modal-close" onclick="app.closeModal('guideModal')" aria-label="Close guide">✕</button>
+    <h2 id="guideModalTitle" style="color:var(--ethics); margin-bottom:12px;" data-i18n="guide_title">🚀 10-Day Plan</h2>
+    <ol style="padding-left:20px; color:var(--muted); line-height:1.8; font-size:0.85rem;">
+      <li><b>1:</b> ⚖️ Intro: AI Ethics Officer role in responsible tech</li>
+      <li><b>2:</b> 🔍 Ethics frameworks: consequentialism, deontology, virtue ethics</li>
+      <li><b>3:</b> 🤖 AI lifecycle: where ethics interventions matter most</li>
+      <li><b>4:</b> ⚠️ Bias detection: technical & social dimensions</li>
+      <li><b>5:</b> 👥 Stakeholder mapping: who is affected, who decides</li>
+      <li><b>6:</b> 📋 Policy drafting: principles into actionable guidelines</li>
+      <li><b>7:</b> ⚖️ Regulatory compliance: EU AI Act, ISO 42001, GDPR</li>
+      <li><b>8:</b> 📊 Impact assessment: social, environmental, economic</li>
+      <li><b>9:</b> 📁 Portfolio: cases in Qwen ethics pipeline formats</li>
+      <li><b>10:</b> 🏆 FINAL EXAM (10/10) → QWEN-ETHICS-XXXXXX</li>
+    </ol>
+    <button class="btn" style="margin-top:16px; width:100%;" onclick="app.closeModal('guideModal')" data-i18n="guide_start">Let's go!</button>
+  </div>
+</div>
+
+<div id="libraryDocsModal" class="modal" onclick="if(event.target===this)app.closeModal('libraryDocsModal')" role="dialog" aria-modal="true" aria-labelledby="libDocsTitle">
+  <div class="modal-content">
+    <button class="modal-close" onclick="app.closeModal('libraryDocsModal')" aria-label="Close library">✕</button>
+    <h2 id="libDocsTitle" style="color:var(--ethics); margin-bottom:12px;">📚 Qwen Ethics Officer Library</h2>
+    <div id="libraryDocsContent" style="max-height:60vh; overflow-y:auto;">
+      <!-- Dynamic content will be inserted here -->
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  const CERT_SECRET = "qwen_ethics_officer_specialist_2026_secret";
+  
+  function generateCertSignature(id, issuer) {
+    const str = `${id}:${issuer}:${CERT_SECRET}`;
+    try { return btoa(encodeURIComponent(str)).substring(0, 24); } 
+    catch(e) { return Array.from(str).map(c => c.charCodeAt(0).toString(16).padStart(2,'0')).join('').substring(0, 24); }
+  }
+  
+  function verifyCertSignature(id, issuer, sig) {
+    if (!id || !issuer || !sig) return false;
+    return generateCertSignature(id, issuer) === sig;
+  }
+
+  // ========== COURSE DATA ==========
+  const AI_ETHICS_COURSE = [
+    { day:1, title:{ru:"⚖️ Введение: роль специалиста по этике ИИ",en:"⚖️ Intro: AI Ethics Officer role"}, content:{ru:"Специалист по этике ИИ — междисциплинарный профессионал, обеспечивающий ответственное внедрение ИИ-систем.",en:"AI Ethics Officer ensures responsible AI deployment."}, case:{ru:"Алгоритм кредитного скоринга дискриминирует по полу. Задача: найти источник смещения.",en:"Credit scoring algorithm discriminates by gender."}, task:{ru:"Назовите 3 этических принципа ИИ.",en:"Name 3 AI ethical principles."}, check:(a)=>/(справедлив|fairness|прозрачн|transparency|приватн|privacy|человек|human|ответственн|responsibility|этик|ethic)/i.test(a), hint:{ru:"Справедливость, Прозрачность, Подконтрольность человеку.",en:"Fairness, Transparency, Human oversight."}, qwenFormat:'{"type":"qwen_ethics_principles.md","principles":["fairness","transparency","human_oversight"]}' },
+    { day:2, title:{ru:"🔍 Этические фреймворки",en:"🔍 Ethics frameworks"}, content:{ru:"Утилитаризм, деонтология, этика добродетелей. Каждый помогает анализировать ИИ-решения.",en:"Utilitarianism, deontology, virtue ethics."}, case:{ru:"Автономный автомобиль выбирает между пассажиром и пешеходом.",en:"Autonomous car trolley problem."}, task:{ru:"Опишите применение трёх фреймворков к алгоритму соцсети.",en:"Apply three frameworks to social media algorithm."}, check:(a)=>/(утилитар|utilitar|деонтолог|deontolog|добродетель|virtue|фреймворк|framework)/i.test(a), hint:{ru:"Утилитаризм: максимизация пользы. Деонтология: правила. Добродетели: характер.",en:"Utilitarianism: max benefit. Deontology: rules. Virtue: character."}, qwenFormat:'{"type":"qwen_framework_analysis.json","frameworks":["utilitarianism","deontology","virtue_ethics"]}' },
+    { day:3, title:{ru:"🤖 Жизненный цикл ИИ",en:"🤖 AI lifecycle"}, content:{ru:"Этика встраивается на всех этапах: сбор данных, обучение, тест, деплой, мониторинг.",en:"Ethics embedded in all stages."}, case:{ru:"ИИ для диагностики: риски смещённых данных и ответственности.",en:"Diagnostic AI: biased data & liability risks."}, task:{ru:"Составьте чек-лист из 4 пунктов для этапа сбора данных.",en:"Create 4-point checklist for data collection."}, check:(a)=>/(данны|data|соглас|consent|аноним|anonym|репрезент|represent|лиценз|license)/i.test(a), hint:{ru:"1. Согласие 2. Анонимизация 3. Репрезентативность 4. Документация источников.",en:"1. Consent 2. Anonymization 3. Representativeness 4. Source docs."}, qwenFormat:'{"type":"qwen_data_checklist.md","items":["consent","anonym","represent","sources"]}' },
+    { day:4, title:{ru:"⚠️ Выявление смещений",en:"⚠️ Bias detection"}, content:{ru:"Смещения в данных, алгоритмах и интерпретации требуют комплексного аудита.",en:"Biases in data, algorithms, interpretation."}, case:{ru:"HR-алгоритм даёт на 30% меньше приглашений 'женским' именам.",en:"HR algorithm gives 30% fewer invites to 'female' names."}, task:{ru:"Опишите метод выявления смещений в датасете скоринга.",en:"Describe bias detection method for scoring dataset."}, check:(a)=>/(смещен|bias|дискримин|discrimin|пол|gender|возраст|age|справедлив|fairness)/i.test(a), hint:{ru:"Стат. анализ распределения, тестирование подгрупп, сравнение с популяцией.",en:"Stat distribution analysis, subgroup testing, population comparison."}, qwenFormat:'{"type":"qwen_bias_audit.csv","attributes":["gender","age","income"],"mitigation":"reweighting"}' },
+    { day:5, title:{ru:"👥 Картирование стейкхолдеров",en:"👥 Stakeholder mapping"}, content:{ru:"Важно выявить всех затронутых: пользователи, регуляторы, уязвимые группы.",en:"Identify all affected: users, regulators, vulnerable groups."}, case:{ru:"ИИ для прогнозирования рецидивов. Стейкхолдеры: обвиняемые, судьи, общество.",en:"Recidivism prediction AI. Stakeholders: defendants, judges, society."}, task:{ru:"Составьте карту стейкхолдеров для системы распознавания лиц.",en:"Map stakeholders for facial recognition system."}, check:(a)=>/(стейкхолдер|stakeholder|пользовател|user|разработчик|developer|регулятор|regulator|обществ|society)/i.test(a), hint:{ru:"Граждане, правоохранители, правозащитники, разработчики, регуляторы.",en:"Citizens, law enforcement, advocates, developers, regulators."}, qwenFormat:'{"type":"qwen_stakeholder_map.csv","groups":["citizens","enforcement","advocates","devs","regulators"]}' },
+    { day:6, title:{ru:"📋 Разработка политик",en:"📋 Policy drafting"}, content:{ru:"Политика должна быть SMART, включать принципы, роли, метрики и цикл пересмотра.",en:"Policy must be SMART, include principles, roles, metrics."}, case:{ru:"Политика использования генеративного ИИ в университете.",en:"Generative AI policy for university."}, task:{ru:"Сформулируйте 3 правила политики ИИ в медицине.",en:"Formulate 3 AI policy rules for healthcare."}, check:(a)=>/(политик|policy|правило|rule|принцип|principle|роль|role|метрик|metric|пересмотр|review)/i.test(a), hint:{ru:"ИИ — вспомогательный инструмент. Объяснимость пациенту. Регулярный аудит.",en:"AI is assistive. Explainable to patient. Regular audits."}, qwenFormat:'{"type":"qwen_policy.json","rules":["human_final","explainability","audit"],"cycle":"quarterly"}' },
+    { day:7, title:{ru:"⚖️ Регуляторное соответствие",en:"⚖️ Regulatory compliance"}, content:{ru:"EU AI Act, ISO 42001, GDPR/152-ФЗ. Классификация рисков и документация.",en:"EU AI Act, ISO 42001, GDPR/152-ФЗ. Risk classification."}, case:{ru:"ИИ-чатбот для банка: информирование, право на человека, защита данных.",en:"Banking AI chatbot: disclosure, human option, data protection."}, task:{ru:"Составьте матрицу соответствия для системы высокого риска (EU AI Act).",en:"Create compliance matrix for high-risk AI (EU AI Act)."}, check:(a)=>/(соответств|compliance|регулятор|regulat|eu|ai act|iso|42001|gdpr|152-фз|риск|risk)/i.test(a), hint:{ru:"Документирование данных, human-in-the-loop, независимый аудит, прозрачность.",en:"Data docs, human-in-the-loop, independent audit, transparency."}, qwenFormat:'{"type":"qwen_compliance.yaml","frameworks":["eu_ai_act","iso_42001"],"risk":"high"}' },
+    { day:8, title:{ru:"📊 Оценка воздействия",en:"📊 Impact assessment"}, content:{ru:"Оценка социальных, экологических, экономических последствий развёртывания ИИ.",en:"Assess social, environmental, economic impacts of AI."}, case:{ru:"ИИ-оптимизация логистики: снижение выбросов vs сокращение рабочих мест.",en:"AI logistics: lower emissions vs job cuts."}, task:{ru:"Опишите метод оценки социального воздействия ИИ-системы.",en:"Describe social impact assessment method for AI."}, check:(a)=>/(воздейств|impact|социальн|social|экологич|environment|экономич|economic|оценк|assess)/i.test(a), hint:{ru:"Опрос стейкхолдеров, анализ сценариев, мониторинг KPI, публичный отчёт.",en:"Stakeholder surveys, scenario analysis, KPI monitoring, public report."}, qwenFormat:'{"type":"qwen_impact.json","dimensions":["social","env","econ"],"method":"scenario_analysis"}' },
+    { day:9, title:{ru:"📁 Портфолио и отчётность",en:"📁 Portfolio & reporting"}, content:{ru:"Сбор кейсов в форматах Qwen: аудит, политика, карта стейкхолдеров, матрица.",en:"Collect cases in Qwen formats: audit, policy, stakeholder, compliance."}, case:{ru:"Подготовка пакета документов для внутреннего этического ревью.",en:"Preparing docs for internal ethical review."}, task:{ru:"Опишите структуру этического паспорта ИИ-модели.",en:"Describe structure of AI model ethics passport."}, check:(a)=>/(портфолио|portfolio|паспорт|passport|документ|doc|отчёт|report|структур|structure)/i.test(a), hint:{ru:"ID модели, дата, метрики справедливости, ограничения, ответственный, цикл обновления.",en:"Model ID, date, fairness metrics, limitations, owner, update cycle."}, qwenFormat:'{"type":"qwen_model_passport.json","fields":["id","date","metrics","limits","owner","cycle"]}' },
+    { day:10, title:{ru:"🏆 ФИНАЛЬНЫЙ ЭКЗАМЕН",en:"🏆 FINAL EXAM"}, content:{ru:"Проверка знаний. Необходимо ответить на 10 вопросов без ошибок.",en:"Knowledge check. 10 questions, 10 correct required."}, case:{ru:"",en:""}, task:{ru:"",en:""}, check:()=>false, hint:{ru:"",en:""}, qwenFormat:"",
+      examQuestions:[
+        {q:{ru:"Основная миссия AI Ethics Officer — обеспечение ответственности ИИ.",en:"Main mission is ensuring AI responsibility."}, correct:true},
+        {q:{ru:"Утилитаризм фокусируется на строгих правилах.",en:"Utilitarianism focuses on strict rules."}, correct:false},
+        {q:{ru:"Анонимизация данных снижает риски приватности.",en:"Data anonymization reduces privacy risks."}, correct:true},
+        {q:{ru:"Смещения возникают только при обучении модели.",en:"Biases only occur during training."}, correct:false},
+        {q:{ru:"Картирование стейкхолдеров помогает выявить уязвимые группы.",en:"Stakeholder mapping helps identify vulnerable groups."}, correct:true},
+        {q:{ru:"Политика ИИ должна пересматриваться раз в 5 лет.",en:"AI policy should be reviewed every 5 years."}, correct:false},
+        {q:{ru:"EU AI Act классифицирует ИИ по уровням риска.",en:"EU AI Act classifies AI by risk levels."}, correct:true},
+        {q:{ru:"Impact Assessment игнорирует экологические факторы.",en:"Impact Assessment ignores environmental factors."}, correct:false},
+        {q:{ru:"Форматы Qwen стандартизируют этическую отчётность.",en:"Qwen formats standardize ethical reporting."}, correct:true},
+        {q:{ru:"AI Ethics Officer должен блокировать все инновации.",en:"AI Ethics Officer should block all innovations."}, correct:false}
+      ]
+    }
+  ];
+
+  // ========== QWEN ETHICS LIBRARY ==========
+  const QWEN_ETHICS_LIBRARY = {
+    version: "qwen-ethics-officer-library-v2.5",
+    lastUpdated: "2026-01-15",
+    compatibility: ["qwen-v2.5", "eu_ai_act", "iso_42001", "gdpr", "152-fz"],
+    
+    roleDocumentation: {
+      title: { ru: "AI Ethics Officer — Полное описание профессии", en: "AI Ethics Officer — Complete Professional Description" },
+      sections: {
+        overview: { ru: "Специалист по этике ИИ — это междисциплинарный профессионал, обеспечивающий ответственное внедрение искусственного интеллекта. Он выступает связующим звеном между техническими командами, юристами, регуляторами и обществом.", en: "AI Ethics Officer is a multidisciplinary professional ensuring responsible AI deployment. They bridge technical teams, legal departments, regulators, and society." },
+        coreResponsibilities: [
+          { ru: "Проведение этических аудитов ИИ-систем на всех этапах жизненного цикла", en: "Conducting ethical audits of AI systems across all lifecycle stages" },
+          { ru: "Разработка и внедрение политик ответственного ИИ", en: "Developing and implementing responsible AI policies" },
+          { ru: "Выявление и смягчение смещений в данных и алгоритмах", en: "Identifying and mitigating biases in data and algorithms" },
+          { ru: "Обеспечение соответствия регуляторным требованиям (EU AI Act, GDPR, 152-ФЗ)", en: "Ensuring compliance with regulatory requirements" },
+          { ru: "Проведение тренингов по этике ИИ для команд", en: "Conducting AI ethics training for teams" },
+          { ru: "Расследование этических инцидентов и обеспечение публичной отчётности", en: "Investigating ethical incidents and ensuring public accountability" }
+        ]
+      }
+    },
+    
+    ethicsFrameworks: {
+      consequentialism: { name: { ru: "Консеквенциализм / Утилитаризм", en: "Consequentialism / Utilitarianism" }, description: { ru: "Оценивает моральную правильность действия исключительно по его последствиям. Максимизация общей пользы и минимизация вреда.", en: "Evaluates moral rightness of action solely by its consequences. Maximize overall benefit and minimize harm." } },
+      deontology: { name: { ru: "Деонтология", en: "Deontology" }, description: { ru: "Акцент на соблюдении моральных правил и обязанностей независимо от последствий. Категорический императив Канта.", en: "Focuses on following moral rules and duties regardless of consequences. Kant's categorical imperative." } },
+      virtueEthics: { name: { ru: "Этика добродетелей", en: "Virtue Ethics" }, description: { ru: "Фокус на характере и добродетелях агента. Вопрос 'каким человеком/организацией быть?' вместо 'что делать?'.", en: "Focuses on agent's character and virtues. Asks 'what kind of person/organization to be?' rather than 'what to do?'." } }
+    },
+    
+    regulatoryFrameworks: {
+      euAiAct: { name: "EU AI Act", description: { ru: "Первый всеобъемлющий закон об ИИ. Классификация рисков: неприемлемый, высокий, ограниченный, минимальный.", en: "First comprehensive AI law. Risk classification: unacceptable, high, limited, minimal." }, requirements: ["Risk assessment", "Transparency obligations", "Human oversight", "Conformity assessment"] },
+      gdpr: { name: "GDPR", description: { ru: "Общий регламент по защите данных. Право на объяснение решений, принятых ИИ.", en: "General Data Protection Regulation. Right to explanation of AI decisions." }, requirements: ["Right to explanation", "Data protection by design", "Privacy impact assessment"] },
+      iso42001: { name: "ISO/IEC 42001", description: { ru: "Система менеджмента искусственного интеллекта. Стандарт для ответственного управления ИИ.", en: "AI management system. Standard for responsible AI governance." }, requirements: ["AI policy establishment", "Risk management process", "Continual improvement"] }
+    },
+    
+    qwenFormats: {
+      ethicsAudit: { format: "qwen_ethics_audit_report.md", schema: { type: "object", properties: { system_description: "string", bias_metrics: "object", compliance_status: "array", recommendations: "array" } } },
+      policyDocument: { format: "qwen_responsible_ai_policy.json", schema: { type: "object", properties: { title: "string", principles: "array", procedures: "object", review_cycle: "string" } } },
+      stakeholderMap: { format: "qwen_stakeholder_map.csv", schema: { type: "csv", columns: ["stakeholder_group", "impact_level", "engagement_method", "concerns"] } },
+      complianceMatrix: { format: "qwen_compliance_matrix.yaml", schema: { type: "yaml", structure: { regulation: "string", requirements: "array", status: "string", evidence: "string" } } }
+    }
+  };
+
+  const STAKEHOLDER_ITEMS = [
+    { id: "users", icon: "👤", label: { ru: "Пользователи", en: "Users" }, impact: "high" },
+    { id: "developers", icon: "💻", label: { ru: "Разработчики", en: "Developers" }, impact: "medium" },
+    { id: "regulators", icon: "⚖️", label: { ru: "Регуляторы", en: "Regulators" }, impact: "high" },
+    { id: "vulnerable", icon: "🛡️", label: { ru: "Уязвимые группы", en: "Vulnerable Groups" }, impact: "critical" }
+  ];
+
+  const RISK_CATEGORIES = [
+    { id: "bias", label: { ru: "Смещения", en: "Bias" }, level: 70 },
+    { id: "privacy", label: { ru: "Приватность", en: "Privacy" }, level: 85 },
+    { id: "transparency", label: { ru: "Прозрачность", en: "Transparency" }, level: 45 },
+    { id: "accountability", label: { ru: "Подотчётность", en: "Accountability" }, level: 60 }
+  ];
+
+  // ========== i18n ==========
+  const i18n = {
+    ru: {
+      hero_subtitle: "Ethics First • 100% Offline • 10 дней • Ответственное внедрение ИИ",
+      qwen_title: "Anti-AI Qwen Academy: Специалист по этике ИИ",
+      guide_btn: "План 10 дней", lib_docs_btn: "Библиотека",
+      concept1: "Аудит", concept2: "Смещения", concept3: "Политики", concept4: "Стейкхолдеры", concept5: "Соответствие", concept6: "Воздействие",
+      tab_course: "🎓 Обучение", tab_tools: "🛠️ Инструменты", tab_library: "📚 Библиотека", tab_progress: "📅 Прогресс",
+      cert_conditions: "🏆 УСЛОВИЯ СЕРТИФИКАТА", cond1_sub: "Этические фреймворки + форматы Qwen", cond2_sub: "Без ошибок", cond3: "Портфолио", cond3_sub: "5 кейсов в форматах Qwen",
+      cert_warning: "⚠️ Идеальный результат → доступ к Library Contributor", progress_title: "📊 Прогресс", lessons_done: "Уроков пройдено",
+      reset_btn: "🔄 Сбросить", reset_warning: "⚠️ Все данные будут удалены",
+      cert_heading: "🎓 СЕРТИФИКАТ", cert_course: "Курс: ", cert_confirms: "Настоящим подтверждается, что", cert_who: "Сертифицированный Специалист по этике ИИ",
+      cert_completed: "успешно завершил курс ответственного внедрения ИИ для этичного развёртывания технологий",
+      cert_issuer: "Issuer:", cert_pipeline: "Pipeline:", cert_compliance: "Compliance:", cert_date_label: "Дата:",
+      cert_download: "💾 JSON", cert_qwen_export: "📤 Qwen Format", cert_print: "🖨️ Print",
+      cert_badge: "Qwen AI Ethics Officer Specialist", cert_practice: "🛠️ Инструменты",
+      cert_validate_title: "🔍 Проверка сертификата", cert_validate_btn: "✅ Check",
+      cert_security: "🔒 Offline • SHA-256 • Qwen-compatible • GDPR-ready",
+      tools_title: "🛠️ Инструменты Специалиста по этике ИИ", tools_subtitle: "Интерактивные инструменты для практики ответственного внедрения ИИ",
+      audit_builder: "Конструктор этического аудита", audit_desc: "Создавайте отчёты этического аудита с параметрами оценки рисков",
+      preview_btn: "👁️ Предпросмотр формата Qwen",
+      stakeholder_mapper: "Карта стейкхолдеров", stakeholder_desc: "Отображайте стейкхолдеров и их этические опасения для ИИ-систем",
+      risk_detector: "Детектор рисков", risk_desc: "Визуализируйте этические риски в дизайне вашей ИИ-системы",
+      analyze_risks: "🔍 Проанализировать риски",
+      policy_gen: "Генератор политик", policy_desc: "Сформируйте документ политики ответственного ИИ для вашей организации",
+      generate_policy: "📋 Сформировать политику",
+      library_title: "📚 Библиотека Специалиста по этике ИИ", library_subtitle: "Документация роли, этические фреймворки, регуляторные руководства, ресурсы",
+      role_title: "Специалист по этике ИИ", role_subtitle: "Гарант ответственного, прозрачного и социально-ориентированного внедрения ИИ-систем",
+      role_mission: "🔑 Ключевая миссия", role_mission_desc: "Обеспечить, чтобы ИИ-системы служили человеческим ценностям, а не наоборот.",
+      role_responsibilities: "🧩 Зоны ответственности", resp1: "Аудит смещений и дискриминации в моделях и данных", resp2: "Разработка внутренних стандартов ответственного ИИ", resp3: "Проведение тренингов для команд", resp4: "Отслеживание законов, подготовка документации", resp5: "Расследование этических инцидентов",
+      role_tools: "🛠️ Инструментарий", tools_desc: "AI Fairness 360, SHAP, LIME, Responsible AI Toolkit",
+      role_kpi: "📊 Метрики эффективности", kpi1: "95%+ соответствие метрикам справедливости", kpi2: "0 критических этических нарушений", kpi3: "100% консультации стейкхолдеров", kpi4: "Все политики версионированы",
+      why_ethics_title: "🎯 Почему организациям нужны Специалисты по этике ИИ",
+      why_ethics_desc: "По мере трансформации отраслей ИИ, Специалисты по этике обеспечивают, чтобы технологии служили обществу.",
+      pipe1_desc: "Выявление смещений, дискриминации, рисков приватности", pipe2_desc: "Разработка внутренних стандартов, кодексов поведения", pipe3_desc: "Картирование затронутых групп, проведение консультаций", pipe4_desc: "Отслеживание EU AI Act, ISO 42001, GDPR, 152-ФЗ", pipe5_desc: "Оценка социальных, экологических, экономических последствий",
+      warning_title: "💡 Важно:", why_ethics_warning: "Специалисты по этике ИИ не блокируют инновации — они обеспечивают, чтобы инновации служили человечеству.",
+      skills_section: "🛠️ Навыки выпускника", hard_skills: "🔹 Hard Skills", soft_skills: "🔹 Soft Skills",
+      hard1: "Понимание жизненного цикла ИИ, метрики справедливости", hard2: "Правовые фреймворки: GDPR, 152-ФЗ, EU AI Act", hard3: "Этические фреймворки: консеквенциализм, деонтология, этика добродетелей", hard4: "Методологии оценки рисков, картирование стейкхолдеров", hard5: "Составление политик, отчётность по аудитам",
+      soft1: "Критическое мышление", soft2: "Коммуникация", soft3: "Медиация", soft4: "Культурная чувствительность", soft5: "Мужество",
+      jobs_title: "💼 Где работают Специалисты по этике ИИ?",
+      salary_info: "Форматы: Полная занятость • Консультант • Волонтёрство • Грант",
+      progress_path: "📈 Путь к Специалисту по этике ИИ",
+      days1_3_desc: "Основы этики, жизненный цикл ИИ, кейсы инцидентов",
+      days4_6_desc: "Выявление смещений, картирование стейкхолдеров, оценка рисков",
+      days7_8_desc: "Составление политик, регуляторное соответствие, отчётность по аудитам",
+      day9_desc: "Портфолио в форматах этических пайплайнов Qwen",
+      day10_desc: "ФИНАЛЬНЫЙ ЭКЗАМЕН (10/10)",
+      output_title: "📦 Форматы отчётности Специалиста по этике ИИ",
+      support_title: "🤝 ПОДДЕРЖАТЬ ПРОЕКТ 💙", support_desc: "Приложение бесплатное. Было и останется.<br>Поддержка разработки:",
+      copy_phone: "📋 Copy", catalog_link: "🌟 Каталог Anti-AI Shield",
+      footer: "Anti-AI Qwen Academy | 100% Offline | AI Ethics Officer",
+      guide_title: "🚀 План 10 дней",
+      cert_valid: "✅ Сертификат действителен", cert_invalid: "❌ Сертификат не найден",
+      voice_on: "Озвучка включена", voice_off: "Озвучка выключена", lang_changed: "Язык изменён",
+      progress_reset: "Прогресс сброшен", cert_downloaded: "Сертификат скачан", portfolio_downloaded: "Qwen Portfolio скачано",
+      print_cert: "Печать...", copied: "Скопировано",
+      too_short: "⚠️ Слишком кратко! Минимум 10 символов.",
+      correct: "✅ Верно! Урок завершён!", incorrect: "❌ Не совсем так. Изучите подсказку.",
+      exam_perfect: "🎉 ИДЕАЛЬНО! 10 из 10", exam_failed: "😔 Не сдано. {score}/10. Нужно 10.",
+      cert_locked: "Сначала получите сертификат (10/10).",
+      reset_confirm: "⚠️ Сбросить весь прогресс?", reset_done: "✅ Сброшено!",
+      day_label: "День", task_label: "Задание", answer_placeholder: "Ваш ответ...",
+      check_btn: "Проверить", hint_btn: "Подсказка", answer_btn: "Ответ",
+      locked_msg: "Пройдите предыдущий урок", final_exam: "ФИНАЛЬНЫЙ ЭКЗАМЕН",
+      exam_instr: "10 вопросов. Нужно <b>10 правильных</b> для доступа к Library Contributor Pipeline.",
+      question: "Вопрос", true_opt: "Верно", false_opt: "Неверно",
+      submit_exam: "Сдать экзамен", out_of: "из", cert_unlocked: "Доступ к Library Contributor разблокирован ↓",
+      retry_btn: "Ещё раз", invalid_format: "Неверный формат", issued_label: "Выдан",
+      mapped: "✅ Отображено"
+    },
+    en: {
+      hero_subtitle: "Ethics First • 100% Offline • 10 days • Responsible AI Implementation",
+      qwen_title: "Anti-AI Qwen Academy: AI Ethics Officer",
+      guide_btn: "10-Day Plan", lib_docs_btn: "Library",
+      concept1: "Audit", concept2: "Bias", concept3: "Policy", concept4: "Stakeholders", concept5: "Compliance", concept6: "Impact",
+      tab_course: "🎓 Course", tab_tools: "🛠️ Tools", tab_library: "📚 Library", tab_progress: "📅 Progress",
+      cert_conditions: "🏆 CERTIFICATE REQUIREMENTS", cond1_sub: "Ethics Frameworks + Qwen formats", cond2_sub: "No mistakes", cond3: "Portfolio", cond3_sub: "5 cases in Qwen formats",
+      cert_warning: "⚠️ Perfect results → Library Contributor access", progress_title: "📊 Progress", lessons_done: "Lessons completed",
+      reset_btn: "🔄 Reset", reset_warning: "⚠️ All data will be deleted",
+      cert_heading: "🎓 CERTIFICATE", cert_course: "Course: ", cert_confirms: "This certifies that", cert_who: "Certified AI Ethics Officer Specialist",
+      cert_completed: "has successfully completed the responsible AI implementation course for ethical technology deployment",
+      cert_issuer: "Issuer:", cert_pipeline: "Pipeline:", cert_compliance: "Compliance:", cert_date_label: "Date:",
+      cert_download: "💾 JSON", cert_qwen_export: "📤 Qwen Format", cert_print: "🖨️ Print",
+      cert_badge: "Qwen AI Ethics Officer Specialist", cert_practice: "🛠️ Tools",
+      cert_validate_title: "🔍 Verify Certificate", cert_validate_btn: "✅ Check",
+      cert_security: "🔒 Offline • SHA-256 • Qwen-compatible • GDPR-ready",
+      tools_title: "🛠️ AI Ethics Officer Toolkit", tools_subtitle: "Interactive tools for responsible AI implementation practice",
+      audit_builder: "Ethics Audit Builder", audit_desc: "Create ethics audit reports with risk assessment parameters",
+      preview_btn: "👁️ Preview Qwen Format",
+      stakeholder_mapper: "Stakeholder Mapper", stakeholder_desc: "Map stakeholders and their ethical concerns for AI systems",
+      risk_detector: "Risk Detector", risk_desc: "Visualize ethical risks in your AI system design",
+      analyze_risks: "🔍 Analyze Risks",
+      policy_gen: "Policy Generator", policy_desc: "Generate responsible AI policy document for your organization",
+      generate_policy: "📋 Generate Policy",
+      library_title: "📚 AI Ethics Officer Specialist Library", library_subtitle: "Role documentation, ethics frameworks, regulatory guides, resources",
+      role_title: "AI Ethics Officer", role_subtitle: "Guardian of responsible, transparent, and socially-oriented AI implementation",
+      role_mission: "🔑 Key Mission", role_mission_desc: "Ensure AI systems serve human values, not vice versa.",
+      role_responsibilities: "🧩 Responsibilities", resp1: "Bias & discrimination audits in models and data", resp2: "Develop internal responsible AI standards", resp3: "Conduct team training", resp4: "Track regulations, prepare audit documentation", resp5: "Investigate ethical incidents",
+      role_tools: "🛠️ Tools", tools_desc: "AI Fairness 360, SHAP, LIME, Responsible AI Toolkit",
+      role_kpi: "📊 KPIs", kpi1: "95%+ fairness metrics compliance", kpi2: "0 critical ethical violations", kpi3: "100% stakeholder consultation", kpi4: "All policies versioned",
+      why_ethics_title: "🎯 Why organizations need AI Ethics Officers",
+      why_ethics_desc: "As AI transforms industries, Ethics Officers ensure technology serves society.",
+      pipe1_desc: "Identify bias, discrimination, privacy risks", pipe2_desc: "Develop internal standards, codes of conduct", pipe3_desc: "Map affected groups, conduct consultations", pipe4_desc: "Track EU AI Act, ISO 42001, GDPR, 152-ФЗ", pipe5_desc: "Evaluate social, environmental, economic impacts",
+      warning_title: "💡 Important:", why_ethics_warning: "AI Ethics Officers don't block innovation — they ensure it serves humanity.",
+      skills_section: "🛠️ Graduate Skills", hard_skills: "🔹 Hard Skills", soft_skills: "🔹 Soft Skills",
+      hard1: "ML lifecycle understanding, fairness metrics", hard2: "Legal frameworks: GDPR, 152-ФЗ, EU AI Act", hard3: "Ethics frameworks", hard4: "Risk assessment, stakeholder mapping", hard5: "Policy drafting, audit reporting",
+      soft1: "Critical thinking", soft2: "Communication", soft3: "Mediation", soft4: "Cultural sensitivity", soft5: "Courage",
+      jobs_title: "💼 Where do AI Ethics Officers work?",
+      salary_info: "Formats: Full-time • Consultant • Volunteer • Grant-funded",
+      progress_path: "📈 Path to AI Ethics Officer Specialist",
+      days1_3_desc: "Ethics foundations, AI lifecycle, incident case studies",
+      days4_6_desc: "Bias detection, stakeholder mapping, risk assessment",
+      days7_8_desc: "Policy drafting, regulatory compliance, audit reporting",
+      day9_desc: "Portfolio in Qwen-compatible ethics formats",
+      day10_desc: "FINAL EXAM (10/10)",
+      output_title: "📦 Qwen AI Ethics Officer Reporting Formats",
+      support_title: "🤝 SUPPORT THE PROJECT 💙", support_desc: "App is free. Always will be.<br>Support development:",
+      copy_phone: "📋 Copy", catalog_link: "🌟 Anti-AI Shield Catalog",
+      footer: "Anti-AI Qwen Academy | 100% Offline | AI Ethics Officer",
+      guide_title: "🚀 10-Day Plan",
+      cert_valid: "✅ Certificate is valid", cert_invalid: "❌ Certificate not found",
+      voice_on: "Voice enabled", voice_off: "Voice disabled", lang_changed: "Language changed",
+      progress_reset: "Progress reset", cert_downloaded: "Certificate downloaded", portfolio_downloaded: "Qwen Portfolio downloaded",
+      print_cert: "Printing...", copied: "Copied",
+      too_short: "⚠️ Too short! Minimum 10 characters.",
+      correct: "✅ Correct! Lesson completed!", incorrect: "❌ Not quite. Check the hint.",
+      exam_perfect: "🎉 PERFECT! 10 out of 10", exam_failed: "😔 Not passed. {score}/10. Need 10.",
+      cert_locked: "Get certificate first (10/10).",
+      reset_confirm: "⚠️ Reset all progress?", reset_done: "✅ Reset!",
+      day_label: "Day", task_label: "Task", answer_placeholder: "Your answer...",
+      check_btn: "Check", hint_btn: "Hint", answer_btn: "Answer",
+      locked_msg: "Complete previous lesson first", final_exam: "FINAL EXAM",
+      exam_instr: "10 questions. Need <b>10 correct</b> for Library Contributor Pipeline access.",
+      question: "Question", true_opt: "True", false_opt: "False",
+      submit_exam: "Submit Exam", out_of: "out of", cert_unlocked: "Library Contributor access unlocked ↓",
+      retry_btn: "Try again", invalid_format: "Invalid format", issued_label: "Issued",
+      mapped: "✅ Mapped"
+    }
+  };
+
+  let currentLang = localStorage.getItem('qwen_eo_lang') || 'ru';
+  let courseProgress = (() => { try { const s = JSON.parse(localStorage.getItem('qwen_eo_progress')); return Array.isArray(s) && s.length === 10 ? s : Array(10).fill(false); } catch(e) { return Array(10).fill(false); } })();
+  let examScore = parseInt(localStorage.getItem('qwen_eo_exam')) || 0;
+  let certData = JSON.parse(localStorage.getItem('qwen_eo_certificate')) || null;
+  let voiceEnabled = localStorage.getItem('qwen_eo_voice') === 'true';
+  
+  const synth = window.speechSynthesis;
+  let voices = [], currentVoice = null, lastSpeakTime = 0, voicesLoaded = false, voiceRetryCount = 0;
+
+  function saveState() {
+    try { localStorage.setItem('qwen_eo_lang', currentLang); localStorage.setItem('qwen_eo_progress', JSON.stringify(courseProgress)); localStorage.setItem('qwen_eo_exam', examScore.toString()); localStorage.setItem('qwen_eo_certificate', JSON.stringify(certData)); localStorage.setItem('qwen_eo_voice', voiceEnabled.toString()); } catch(e) { console.warn('Storage save failed:', e); }
+  }
+  
+  function isSpeechSupported() { return typeof window !== 'undefined' && 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window; }
+  
+  function loadVoicesWithRetry() {
+    if (!isSpeechSupported() || !synth) return;
+    try { voices = synth.getVoices(); if (voices.length > 0) { voicesLoaded = true; selectVoice(); } else if (voiceRetryCount < 5) { voiceRetryCount++; setTimeout(loadVoicesWithRetry, 500 * voiceRetryCount); } } catch(e) { console.warn('Voice load error:', e); }
+  }
+  
+  function selectVoice() { if (!voices.length) return; const p = currentLang === 'ru' ? 'ru' : 'en'; currentVoice = voices.find(v => v.lang === `${p}-${p.toUpperCase()}`) || voices.find(v => v.lang.startsWith(p)) || voices.find(v => v.default) || voices[0]; }
+  
+  if (synth?.onvoiceschanged !== undefined) { synth.onvoiceschanged = () => { voices = synth.getVoices(); if (voices.length > 0) { voicesLoaded = true; selectVoice(); } }; }
+  loadVoicesWithRetry(); setTimeout(loadVoicesWithRetry, 1000);
+  
+  function speak(text, priority = false) {
+    if (!voiceEnabled || !isSpeechSupported() || !text) return;
+    if (synth && synth.speaking) { try { synth.cancel(); } catch(e) {} }
+    if (!voicesLoaded && synth) { const v = synth.getVoices(); if (v.length > 0) { voices = v; voicesLoaded = true; selectVoice(); } }
+    if (!voicesLoaded) return;
+    const now = Date.now(); if (now - lastSpeakTime < 800 && !priority) return; lastSpeakTime = now;
+    try { const u = new SpeechSynthesisUtterance(text); if (currentVoice) u.voice = currentVoice; u.rate = 0.95; u.lang = currentLang === 'ru' ? 'ru-RU' : 'en-US'; if (synth) synth.speak(u); } catch(e) {}
+  }
+  
+  function updateVoiceBtn() { const btn = document.getElementById('voiceBtn'); if (btn) { btn.textContent = voiceEnabled ? '🔊' : '🔇'; btn.classList.toggle('active', voiceEnabled); btn.setAttribute('aria-pressed', voiceEnabled); } }
+
+  const app = {
+    t: function(key, params = {}) { let text = i18n[currentLang]?.[key] || i18n.ru[key] || key; Object.keys(params).forEach(p => text = text.replace(`{${p}}`, params[p])); return text; },
+    getBilingual: function(content) { if (typeof content === 'object' && content.ru && content.en) { return content[currentLang] || content.ru; } return content; },
+    
+    applyLang: function() {
+      document.querySelectorAll('[data-i18n]').forEach(el => { const key = el.getAttribute('data-i18n'); if (key && this.t(key)) el.textContent = this.t(key); });
+      document.getElementById('langBtn').textContent = currentLang === 'ru' ? '🌐 EN' : '🌐 RU';
+      const tm = { course: 'tab_course', tools: 'tab_tools', library: 'tab_library', progress: 'tab_progress' };
+      document.querySelectorAll('.tab-btn').forEach(b => { const k = tm[b.dataset.tab]; if (k && this.t(k)) b.textContent = this.t(k); });
+      updateVoiceBtn(); this.renderCourse(); this.renderTools(); speak(this.t('lang_changed'), true);
+    },
+    
+    toggleLang: function() { currentLang = currentLang === 'ru' ? 'en' : 'ru'; saveState(); this.applyLang(); },
+    switchTab: function(id) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+      document.getElementById(id).classList.add('active');
+      const activeBtn = document.querySelector(`.tab-btn[data-tab="${id}"]`); activeBtn.classList.add('active'); activeBtn.setAttribute('aria-selected', 'true');
+    },
+    
+    _domCache: {},
+    _getEl: function(id) { if (!this._domCache[id]) this._domCache[id] = document.getElementById(id); return this._domCache[id]; },
+    
+    renderCourse: function() {
+      this._domCache = {};
+      const c = this._getEl('lessonsContainer'); if (!c) return;
+      const completed = courseProgress.filter(x => x).length;
+      const pEl = this._getEl('courseProgress'), bEl = this._getEl('courseBar');
+      if (pEl) { pEl.textContent = `${completed}/10`; if(bEl) bEl.style.width = `${completed * 10}%`; if(bEl?.parentElement) bEl.parentElement.setAttribute('aria-valuenow', completed * 10); }
+      const certBox = this._getEl('certificateBox');
+      if (certBox) {
+        if (courseProgress[9] && examScore === 10) {
+          if (!certData) {
+            const randomPart = crypto.randomUUID ? crypto.randomUUID().replace(/-/g, '').slice(0, 8).toUpperCase() : Math.random().toString(36).substring(2, 8).toUpperCase();
+            const id = 'QWEN-ETHICS-' + randomPart;
+            certData = { id, course: "Qwen AI Ethics Officer Specialist", pipeline: "qwen-ethics-officer-v1", version: "qwen-v2.5", date: new Date().toISOString().split('T')[0], issuer: "Anti-AI Qwen Academy", compliance: ["eu_ai_act", "iso_42001", "gdpr_compliant"], sig: generateCertSignature(id, "Anti-AI Qwen Academy"), skills: ["ethics_audit", "bias_detection", "policy_design", "stakeholder_mapping", "compliance"] }; saveState();
+          }
+          if (certData) { certBox.style.display = 'block'; this._getEl('certIdDisplay').textContent = certData.id; this._getEl('certDateDisplay').textContent = certData.date; this._getEl('certCourseDisplay').textContent = certData.course; this._getEl('certIssuerDisplay').textContent = certData.issuer; this._getEl('certPipelineDisplay').textContent = certData.pipeline; this._getEl('certComplianceDisplay').textContent = certData.compliance.join(', '); } else { certBox.style.display = 'none'; }
+        } else { certBox.style.display = 'none'; }
+      }
+      const fragment = document.createDocumentFragment();
+      AI_ETHICS_COURSE.forEach((l, i) => {
+        const done = courseProgress[i], locked = i > 0 && !courseProgress[i-1] && !done, active = !locked && !done;
+        let st, sc; if (done) { st = currentLang === 'ru' ? '✅ ПРОЙДЕН' : '✅ DONE'; sc = 'completed'; } else if (active) { st = currentLang === 'ru' ? '🔓 АКТИВЕН' : '🔓 ACTIVE'; sc = 'active'; } else { st = currentLang === 'ru' ? '🔒 ЗАКРЫТ' : '🔒 LOCKED'; sc = 'locked'; }
+        const card = document.createElement('div'); card.className = `lesson-card ${done?'completed':active?'active':'locked'}`; card.setAttribute('role', 'listitem');
+        card.innerHTML = `<div class="lesson-header"><span class="lesson-title">${this.t('day_label')} ${l.day}: ${this.getBilingual(l.title)}</span><span class="lesson-status ${sc}">${st}</span></div>`;
+        if (!locked) {
+          card.innerHTML += `<div class="lesson-content">${this.getBilingual(l.content)}</div>`;
+          if (l.case) card.innerHTML += `<div class="case-text">${this.getBilingual(l.case)}</div>`;
+          if (l.qwenFormat) card.innerHTML += `<div class="qwen-format">📦 Qwen Format: ${l.qwenFormat}</div>`;
+          card.innerHTML += `<div class="lesson-task"><b>🎯 ${this.t('task_label')}:</b> ${this.getBilingual(l.task)}</div><textarea class="lesson-input" id="task-${i}" placeholder="${this.t('answer_placeholder')}" ${done?'disabled':''}></textarea>
+          <div class="btn-group"><button class="btn secondary" onclick="app.checkLesson(${i})" ${done?'disabled':''}>✅ ${this.t('check_btn')}</button><button class="btn secondary" onclick="app.showHint(${i})">💡 ${this.t('hint_btn')}</button><button class="btn secondary" onclick="app.showAnswer(${i})">👁️ ${this.t('answer_btn')}</button></div>
+          <div id="hint-${i}" style="display:none; margin-top:8px; padding:10px; background:rgba(245,158,11,0.1); border-radius:6px; font-size:0.8rem; color:var(--ethics);"></div>
+          <div id="answer-${i}" style="display:none; margin-top:8px; padding:10px; background:rgba(245,158,11,0.1); border-radius:6px; font-size:0.8rem; color:var(--ethics);"></div>
+          <div class="lesson-feedback" id="feedback-${i}" role="status" aria-live="polite"></div>`;
+        } else { card.innerHTML += `<p style="color:var(--muted); font-size:0.85rem;">🔒 ${this.t('locked_msg')}</p>`; }
+        fragment.appendChild(card);
+      }); c.innerHTML = ''; c.appendChild(fragment);
+      if (courseProgress.slice(0,9).every(x=>x) && !courseProgress[9] && examScore !== 10) this.renderExam();
+    },
+    
+    checkLesson: function(i) {
+      const inp = this._getEl(`task-${i}`)?.value.trim(), fb = this._getEl(`feedback-${i}`);
+      if (!inp || !fb) return; if (inp.length < 10) { fb.className='lesson-feedback error'; fb.style.display='block'; fb.innerHTML=`⚠️ <b>${this.t('too_short')}</b>`; return; }
+      const checkFn = AI_ETHICS_COURSE[i].check; if (typeof checkFn !== 'function') { fb.className='lesson-feedback error'; fb.innerHTML = `⚠️ Ошибка проверки.`; fb.style.display='block'; return; }
+      const ok = checkFn(inp); fb.style.display='block';
+      if (ok) { courseProgress[i]=true; saveState(); this.renderCourse(); fb.className='lesson-feedback success'; fb.innerHTML=this.t('correct'); speak(this.t('correct'), true); }
+      else { fb.className='lesson-feedback error'; fb.innerHTML=this.t('incorrect'); speak(this.t('incorrect'), true); }
+    },
+    
+    showHint: function(i) { const h=this._getEl(`hint-${i}`); if(!h)return; h.style.display=h.style.display==='none'?'block':'none'; h.textContent='💡 '+this.getBilingual(AI_ETHICS_COURSE[i].hint); },
+    showAnswer: function(i) { const a=this._getEl(`answer-${i}`); if(!a)return; a.style.display=a.style.display==='none'?'block':'none'; a.textContent='📚 '+this.t('answer_btn')+': '+this.getBilingual(AI_ETHICS_COURSE[i].hint); },
+    
+    renderExam: function() {
+      if (courseProgress[9]) return; const l=AI_ETHICS_COURSE[9], c=this._getEl('examContainer'); if(!c)return;
+      let h = `<div class="card" style="border-color:var(--ethics); background:rgba(245,158,11,0.05); margin-top:16px;"><h3>🏆 ${this.t('final_exam')}</h3><p style="margin:12px 0;">${this.t('exam_instr')}</p>`;
+      l.examQuestions.forEach((q, i) => { h += `<div class="exam-question" id="eq${i}"><p style="margin-bottom:8px;"><b>${this.t('question')} ${i+1}:</b> ${this.getBilingual(q.q)}</p><div class="exam-options"><label><input type="radio" name="exam${i}" value="true"> ✅ ${this.t('true_opt')}</label><label><input type="radio" name="exam${i}" value="false"> ❌ ${this.t('false_opt')}</label></div></div>`; });
+      h += `<button class="btn" onclick="app.submitExam()" style="width:100%; margin-top:16px; font-size:1.1rem;">📝 ${this.t('submit_exam')}</button><div id="examResult" style="margin-top:16px; display:none;" role="status" aria-live="polite"></div></div>`; c.innerHTML = h;
+    },
+    
+    submitExam: function() {
+      let correct = 0; AI_ETHICS_COURSE[9].examQuestions.forEach((q, i) => { const sel = document.querySelector(`input[name="exam${i}"]:checked`); if (sel) { const ok = (sel.value==='true') === q.correct; if(ok)correct++; const e=document.getElementById(`eq${i}`); if(e){e.classList.add('answered'); e.style.borderLeft=`3px solid ${ok?'var(--success)':'var(--danger)'}`; } } });
+      examScore = correct; saveState(); const res = this._getEl('examResult'); res.style.display='block';
+      if (correct===10) { courseProgress[9]=true; saveState(); this.renderCourse(); res.innerHTML = `<div style="text-align:center;padding:24px;background:rgba(46,204,113,0.15);border-radius:12px;border:2px solid var(--success);"><h3 style="color:var(--success);font-size:1.8rem;">🎉 ${this.t('exam_perfect')}</h3><p style="font-size:1.3rem;margin:16px 0;"><b>10 ${this.t('out_of')} 10</b></p><p style="font-size:1.1rem;color:var(--gold);">🏆 ${this.t('cert_unlocked')}</p></div>`; speak(this.t('exam_perfect'), true); }
+      else { res.innerHTML = `<div style="text-align:center;padding:24px;background:rgba(231,76,60,0.15);border-radius:12px;border:2px solid var(--danger);"><h3 style="color:var(--danger);font-size:1.5rem;">😔 ${this.t('exam_failed', {score:correct})}</h3><button class="btn secondary" onclick="app.renderExam()" style="margin-top:12px;">🔄 ${this.t('retry_btn')}</button></div>`; speak(this.t('exam_failed', {score:correct}), true); }
+    },
+    
+    renderTools: function() {
+      const container = document.getElementById('stakeholderGrid'); if(!container) return;
+      container.innerHTML = ''; STAKEHOLDER_ITEMS.forEach(item => { const div = document.createElement('div'); div.className = 'stakeholder-item'; div.dataset.id = item.id; div.dataset.impact = item.impact; div.setAttribute('role', 'option'); div.setAttribute('aria-selected', 'false'); div.setAttribute('tabindex', '0'); div.innerHTML = `<div class="icon" aria-hidden="true">${item.icon}</div><div class="label">${this.getBilingual(item.label)}</div>`; div.onclick = () => { document.querySelectorAll('.stakeholder-item').forEach(i => { i.classList.remove('selected'); i.setAttribute('aria-selected', 'false'); }); div.classList.add('selected'); div.setAttribute('aria-selected', 'true'); }; div.onkeydown = (e) => { if(e.key==='Enter'||e.key===' ') { e.preventDefault(); div.click(); } }; container.appendChild(div); });
+      const riskContainer = document.getElementById('riskChart'); if(riskContainer) { riskContainer.innerHTML = ''; RISK_CATEGORIES.forEach(cat => { const div = document.createElement('div'); div.className = 'risk-bar'; div.innerHTML = `<span class="label">${this.getBilingual(cat.label)}</span><div class="bar"><div class="fill" style="width:${Math.min(100, cat.level)}%"></div></div><span class="value">${cat.level}%</span>`; riskContainer.appendChild(div); }); }
+    },
+    
+    mapStakeholder: function(impact) { const selected = document.querySelector('.stakeholder-item.selected'); const result = document.getElementById('stakeholderResult'); if(!selected || !result) return; selected.dataset.impact = impact; selected.style.borderColor = impact === 'high_impact' ? 'var(--danger)' : impact === 'consulted' ? 'var(--warning)' : 'var(--success)'; result.style.display = 'block'; result.innerHTML = `<span style="color:var(--success);">✅ ${this.t('mapped')}: ${selected.dataset.id} → ${impact}</span>`; speak(this.t('correct'), true); },
+    
+    analyzeRisks: function() { const result = document.getElementById('riskResult'); if(!result) return; const highRisks = RISK_CATEGORIES.filter(c => c.level > 70); result.style.display = 'block'; if(highRisks.length === 0) { result.innerHTML = `<span style="color:var(--success);">✅ ${this.t('practice_correct')}<br><small>${currentLang === 'ru' ? 'Риски в пределах допустимого' : 'Risks within acceptable range'}</small></span>`; speak(this.t('practice_correct'), true); } else { const riskList = highRisks.map(r => this.getBilingual(r.label)).join(', '); result.innerHTML = `<span style="color:var(--warning);">⚠️ ${this.t('practice_incorrect')}<br><small>${currentLang === 'ru' ? 'Высокие риски: ' + riskList + '. Требуются корректирующие меры.' : 'High risks: ' + riskList + '. Mitigation required.'}</small></span>`; speak(this.t('practice_incorrect'), true); } },
+    
+    generateAuditPreview: function() {
+      const desc = document.getElementById('auditDesc')?.value.trim(); const type = document.getElementById('systemTypeSelect')?.value || 'ml'; const risk = document.getElementById('riskLevelSelect')?.value || 'limited'; const jurisdiction = document.getElementById('jurisdictionSelect')?.value || 'eu'; const fairness = document.getElementById('fairnessSlider')?.value || 7; const preview = document.getElementById('auditPreview'); const fairnessValue = document.getElementById('fairnessValue'); if(fairnessValue) fairnessValue.textContent = fairness; if (!desc || !preview) return; const qwenRecord = { type: "qwen_ethics_audit", version: "qwen-v2.5", system_description: desc, system_type: type, risk_level: risk, jurisdiction: jurisdiction, fairness_score: parseInt(fairness) / 10, audit_findings: { bias_detected: false, privacy_compliant: true, explainability_score: 0.85 }, recommendations: ["stakeholder_consultation", "bias_mitigation", "transparency_report"], compliance: ["eu_ai_act", "gdpr"], created_at: new Date().toISOString() }; preview.textContent = JSON.stringify(qwenRecord, null, 2); preview.style.display = 'block';
+    },
+    
+    generatePolicy: function() {
+      const title = document.getElementById('policyTitle')?.value.trim() || 'Responsible AI Policy'; const scope = document.getElementById('policyScope')?.value.trim() || 'General AI Use'; const notes = document.getElementById('policyNotes')?.value.trim() || ''; const output = document.getElementById('policyOutput'); if(!output) return; const policy = { id: crypto.randomUUID ? crypto.randomUUID().replace(/-/g, '').slice(0,8).toUpperCase() : Math.random().toString(36).substring(2,8).toUpperCase(), title, scope, principles: ["fairness", "transparency", "privacy", "human_oversight", "accountability"], procedures: { risk_assessment: "mandatory_for_high_risk", stakeholder_consultation: "required", audit_cycle: "quarterly" }, compliance: ["eu_ai_act", "iso_42001", "gdpr"], review_cycle: "quarterly", notes, created_by: "AI Ethics Officer Specialist", project: "anti-ai-qwen-academy" }; output.textContent = JSON.stringify(policy, null, 2); output.style.display = 'block';
+    },
+    
+    resetProgress: function() { if(confirm(this.t('reset_confirm'))) { localStorage.removeItem('qwen_eo_progress'); localStorage.removeItem('qwen_eo_exam'); localStorage.removeItem('qwen_eo_certificate'); courseProgress=Array(10).fill(false); examScore=0; certData=null; saveState(); this.renderCourse(); speak(this.t('progress_reset'), true); alert(this.t('reset_done')); } },
+    
+    exportCertificate: function() { if(!certData){alert(this.t('cert_locked'));return;} try { const b=new Blob([JSON.stringify(certData,null,2)],{type:'application/json'}); const url=URL.createObjectURL(b); const a=document.createElement('a'); a.href=url; a.download=`certificate-${certData.id}.json`; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); speak(this.t('cert_downloaded'), true); } catch(e) { alert(this.t('cert_file_error')); } },
+    
+    exportQwenPortfolio: function() { if(!certData){alert(this.t('cert_locked'));return;} try { const qwenData = { metadata: { cert_id: certData.id, pipeline: certData.pipeline, version: certData.version, date: certData.date, issuer: certData.issuer, compliance: certData.compliance }, cases: [{id:"e1",type:"audit",title:"HR Algorithm Ethics Audit",format:"qwen_ethics_audit_report.md"},{id:"e2",type:"policy",title:"Responsible AI Policy Draft",format:"qwen_responsible_ai_policy.json"},{id:"e3",type:"stakeholder",title:"Facial Recognition Stakeholder Map",format:"qwen_stakeholder_map.csv"},{id:"e4",type:"compliance",title:"EU AI Act Compliance Matrix",format:"qwen_compliance_matrix.yaml"},{id:"e5",type:"impact",title:"Healthcare AI Impact Assessment",format:"qwen_impact_assessment.json"}], skills: certData.skills, signature: generateCertSignature(certData.id, certData.issuer) }; const b=new Blob([JSON.stringify(qwenData,null,2)],{type:'application/json'}); const url=URL.createObjectURL(b); const a=document.createElement('a'); a.href=url; a.download=`qwen-portfolio-${certData.id}.json`; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); speak(this.t('portfolio_downloaded'), true); } catch(e) { alert(this.t('cert_file_error')); } },
+    
+    printCertificate: function() { if(!certData)return; const w=window.open('','_blank','width=900,height=700'); if(!w){alert('❌ Popup blocked.');return;} try { w.document.write(`<!DOCTYPE html><html><head><title>Certificate ${certData.id}</title><style>body{margin:0;padding:40px;font-family:system-ui;background:#0a0c14;color:#e6eaf0;min-height:100vh;display:flex;justify-content:center;align-items:center;}.cert{background:linear-gradient(135deg,rgba(245,158,11,0.15),rgba(124,58,237,0.1));border:4px solid #f59e0b;border-radius:20px;padding:50px;text-align:center;max-width:800px;}h1{color:#f59e0b;font-size:2.5rem;margin-bottom:20px;}.seal{width:100px;height:100px;border:4px solid #f59e0b;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:30px auto;font-size:3rem;background:rgba(245,158,11,0.1);}.badge{display:inline-block;padding:10px 24px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#000;border-radius:30px;font-weight:bold;margin:20px 0;}.id{font-family:monospace;background:rgba(0,0,0,0.4);padding:8px 16px;border-radius:8px;color:#f59e0b;display:inline-block;margin:12px 0;}.meta{color:#7c3aed;font-size:0.9rem;margin:8px 0;}p{font-size:1.1rem;margin:10px 0;}@media print{body{background:white;color:black;}.cert{border-color:#f59e0b;background:white;}}</style></head><body><div class="cert"><div class="seal">⚖️</div><h1>🎓 CERTIFICATE</h1><p style="font-size:1.3rem;margin:16px 0;"><b>${certData.issuer}</b></p><p>This certifies that</p><p style="font-size:1.2rem;color:#f59e0b;margin:8px 0;font-weight:bold;">${certData.course}</p><p>has successfully completed the responsible AI implementation course for ethical technology deployment</p><div class="id">${certData.id}</div><p class="meta">Pipeline: ${certData.pipeline} | Version: ${certData.version}</p><p class="meta">Compliance: ${certData.compliance.join(', ')}</p><p class="meta">Date: ${certData.date} | Issuer: ${certData.issuer}</p><div class="badge">Qwen AI Ethics Officer Specialist</div></div><script>window.onload=function(){window.print();}<\/script></body></html>`); w.document.close(); w.onafterprint = function() { try { w.close(); } catch(e) {} }; setTimeout(() => { try { if (!w.closed) w.close(); } catch(e) {} }, 10000); speak(this.t('print_cert'), true); } catch(e) { w.close(); } },
+    
+    validateCertificate: function() { const inp=this._getEl('validateInput')?.value.trim().toUpperCase(), res=this._getEl('validateResult'); if(!res)return; res.style.display='block'; if(!inp||!/^QWEN-ETHICS-[A-Z0-9]{6}$/.test(inp)){res.textContent=`❌ ${this.t('invalid_format')}`;res.style.color='var(--danger)';return;} if(certData && inp === certData.id) { const sigValid = verifyCertSignature(certData.id, certData.issuer, certData.sig); if(sigValid) { res.innerHTML=`<span style="color:var(--success);">✅ ${this.t('cert_valid')}<br><small>${this.t('issued_label')}: ${certData.date}</small></span>`; res.style.color='var(--success)'; speak(this.t('cert_valid'), true); } else { res.textContent=`❌ ${this.t('cert_bad_sig')}`; res.style.color='var(--danger)'; speak(this.t('cert_bad_sig'), true); } } else { res.textContent=`❌ ${this.t('cert_invalid')}`; res.style.color='var(--danger)'; speak(this.t('cert_invalid'), true); } },
+    
+    copyPhone: function() { const p='89202275676'; if(navigator.clipboard?.writeText) navigator.clipboard.writeText(p).then(()=>speak(this.t('copied'), true)).catch(()=>app._fallbackCopy(p)); else app._fallbackCopy(p); },
+    _fallbackCopy: function(text) { try { const t=document.createElement('textarea'); t.value=text; t.setAttribute('readonly',''); t.style.cssText='position:fixed;top:-9999px;left:-9999px;'; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); speak(this.t('copied'), true); } catch(e) { alert('Copy failed'); } },
+    
+    openModal: function(id) {
+      this._getEl(id)?.classList.add('open');
+      if (id === 'libraryDocsModal') {
+        const contentDiv = document.getElementById('libraryDocsContent');
+        if (contentDiv) {
+          const lib = QWEN_ETHICS_LIBRARY;
+          const roleDoc = lib.roleDocumentation;
+          const ethicsFrameworks = lib.ethicsFrameworks;
+          const regulatory = lib.regulatoryFrameworks;
+          const formats = lib.qwenFormats;
+          
+          contentDiv.innerHTML = `
+            <div style="margin-bottom:20px;"><h3 style="color:var(--ethics);">📖 ${this.getBilingual(roleDoc.title)}</h3>
+            <p style="font-size:0.85rem; color:var(--muted);">${this.getBilingual(roleDoc.sections.overview)}</p>
+            <h4 style="color:var(--gold); margin-top:12px;">${currentLang === 'ru' ? 'Ключевые обязанности:' : 'Key Responsibilities:'}</h4>
+            <ul style="color:var(--muted); font-size:0.85rem;">${roleDoc.sections.coreResponsibilities.map(r => `<li>${this.getBilingual(r)}</li>`).join('')}</ul></div>
+            
+            <div style="margin-bottom:20px;"><h3 style="color:var(--ethics);">⚖️ ${currentLang === 'ru' ? 'Этические фреймворки' : 'Ethics Frameworks'}</h3>
+            <div class="library-grid" style="grid-template-columns:1fr;">${Object.entries(ethicsFrameworks).map(([key, val]) => `<div class="library-card"><h5>${this.getBilingual(val.name)}</h5><p style="font-size:0.8rem;">${this.getBilingual(val.description)}</p></div>`).join('')}</div></div>
+            
+            <div style="margin-bottom:20px;"><h3 style="color:var(--ethics);">📜 ${currentLang === 'ru' ? 'Регуляторные фреймворки' : 'Regulatory Frameworks'}</h3>
+            <div class="library-grid">${Object.entries(regulatory).map(([key, val]) => `<div class="library-card"><h5>${val.name}</h5><p style="font-size:0.75rem;">${this.getBilingual(val.description)}</p><ul style="font-size:0.7rem; margin-top:6px;"><li>${val.requirements.join('</li><li>')}</li></ul></div>`).join('')}</div></div>
+            
+            <div><h3 style="color:var(--ethics);">📦 ${currentLang === 'ru' ? 'Qwen форматы отчётности' : 'Qwen Reporting Formats'}</h3>
+            <div class="library-grid">${Object.entries(formats).map(([key, val]) => `<div class="library-card"><h5>${val.format}</h5><pre style="font-size:0.65rem; background:rgba(0,0,0,0.3); padding:6px; border-radius:4px; overflow-x:auto;">${JSON.stringify(val.schema, null, 2)}</pre></div>`).join('')}</div></div>
+          `;
+        }
+      }
+    },
+    closeModal: function(id) { this._getEl(id)?.classList.remove('open'); },
+    
+    toggleVoice: function() { if(!isSpeechSupported()){ alert(currentLang==='ru'?'⚠️ Озвучка не поддерживается. Попробуйте Chrome/Edge.':'⚠️ Speech not supported. Try Chrome/Edge.'); return; } voiceEnabled=!voiceEnabled; saveState(); updateVoiceBtn(); speak(voiceEnabled?this.t('voice_on'):this.t('voice_off'), true); }
+  };
+
+  document.addEventListener('DOMContentLoaded', () => {
+    if (voiceEnabled && isSpeechSupported()) setTimeout(() => { loadVoicesWithRetry(); }, 100);
+    app.applyLang(); updateVoiceBtn(); app.renderCourse(); app.renderTools();
+    document.querySelectorAll('.tab-btn').forEach((btn, i, arr) => { btn.addEventListener('click', (e) => { e.preventDefault(); app.switchTab(btn.dataset.tab); }); });
+    const fairnessSlider = document.getElementById('fairnessSlider'); const fairnessValue = document.getElementById('fairnessValue'); if(fairnessSlider && fairnessValue) { fairnessSlider.addEventListener('input', () => { fairnessValue.textContent = fairnessSlider.value; }); }
+    let speechUnlocked=false; function unlock(){ if(speechUnlocked||!isSpeechSupported())return; try{ const u=new SpeechSynthesisUtterance('');u.volume=0; if(synth){synth.speak(u);synth.cancel();} speechUnlocked=true; }catch(e){} } ['click','touchstart','keydown'].forEach(evt=>document.addEventListener(evt,unlock,{once:true,passive:true}));
+  });
+  
+  window.app = app;
+})();
+</script>
+</body>
+</html>
