@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://sitemaps.org">
+  <!-- Главная страница курса -->
+  <url>
+    <loc>https://anti-ai-qwen-academy-ai-ethics-offi.vercel.app/</loc>
+    <lastmod>2026-05-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  
+  <!-- Раздел с интерактивными инструментами (Инструменты аудита, политики и рисков) -->
+  <url>
+    <loc>https://vercel.app</loc>
+    <lastmod>2026-05-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- База знаний / Библиотека специалиста по этике ИИ -->
+  <url>
+    <loc>https://vercel.app</loc>
+    <lastmod>2026-05-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Программа обучения (10-дневный план) -->
+  <url>
+    <loc>https://vercel.app</loc>
+    <lastmod>2026-05-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+</urlset>

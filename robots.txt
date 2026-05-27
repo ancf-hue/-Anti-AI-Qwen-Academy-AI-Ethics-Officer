@@ -1,0 +1,10 @@
+# https://robotstxt.org
+
+User-agent: *
+Allow: /
+Disallow: /_next/       # Защита от индексации служебных файлов Next.js (если используется)
+Disallow: /static/      # Защита от прямого обхода статических ассетов
+Disallow: /api/         # Запрет на индексацию внутренних API-запросов
+
+# Ссылка на карту сайта для всех поисковиков
+Sitemap: https://vercel.app
